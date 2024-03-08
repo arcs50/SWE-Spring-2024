@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout 
-from recipeApp.admin import UserCreationForm
+from userAccount.admin import UserCreationForm
 from django.urls import reverse_lazy
 from django.views.generic.edit import CreateView
 
