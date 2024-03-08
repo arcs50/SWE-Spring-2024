@@ -1,0 +1,23 @@
+As we have different systems, to avoid further complexity, I propose some coding standards here.
+
+1. All urls should be lower case. If necessary, use '-' to connect words and '_' to connect siblings.
+    e.g. localhost/profile/shef/shef_a101
+
+2. All paths use os lib to join. e.g. TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
+
+3. All class names capitalize the first letter of words. e.g. class TestModel(models.Model)
+
+4. All function names and variable names are lower case. If necessary, use '_' to connect words. 
+    e.g. def create_user(self, email, password=None, **extra_fields)
+
+5. Django structure: 
+    mySite is the main app (currently), it's mainly function is to route to the other apps. 
+    Each app has a model.py to store relavent models/tables (currently all models in userAccount which is not good). 
+    Each app has urls.py to route to its siblings, don't create duplicate urls that route to the same page.
+    Each app has views.py to define the exact pages to be routed.
+    Each app has templates folder to store relavent html pages.
+    The base dir has a general templates folder to store html pages that probably used in multiple apps. e.g. welcome page
+    The base dir has a general statics folder to store css, js, images that probably used in multiple apps. e.g. bootstrap extension
+
+If any confusion and don't have time to discuss, follow the standards shown on mySite.
+

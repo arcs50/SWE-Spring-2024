@@ -1,5 +1,5 @@
 """
-URL configuration for mysite project.
+URL configuration for mySite project.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/5.0/topics/http/urls/
@@ -16,9 +16,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
+from . import views
 
 urlpatterns = [
-    path("userAccount/", include("userAccount.urls")),
-    path('admin/', admin.site.urls),
-    
+    path("", views.welcome, name="welcome"),
+    path("account/", include("userAccount.urls")),
+    path('admin/', admin.site.urls),  
+    path("hello/", include("helloWorld.urls")),
 ]
