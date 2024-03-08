@@ -11,13 +11,13 @@ As we have different systems, to avoid further complexity, I propose some coding
     e.g. def create_user(self, email, password=None, **extra_fields)
 
 5. Django structure: 
-    mySite is the main app (currently), it's mainly function is to route to the other apps. 
+    recipeApp is the main app (currently), it's mainly function is to route to the other apps. 
     Each app has a model.py to store relavent models/tables (currently all models in userAccount which is not good). 
-    Each app has urls.py to route to its siblings, don't create duplicate urls that route to the same page.
+    Each app has urls.py to route to its sibling urls, don't create duplicate urls that route to the same page.
     Each app has views.py to define the exact pages to be routed.
     Each app has templates folder to store relavent html pages.
     The base dir has a general templates folder to store html pages that probably used in multiple apps. e.g. welcome page
     The base dir has a general statics folder to store css, js, images that probably used in multiple apps. e.g. bootstrap extension
 
-If any confusion and don't have time to discuss, follow the standards shown on mySite.
+If any confusion and don't have time to discuss, follow the standards shown on helloWorld.
 
