@@ -1,7 +1,7 @@
 As we have different systems, to avoid further complexity, I propose some coding standards here.
 
 1. All urls should be lower case. If necessary, use '-' to connect words and '_' to connect siblings.
-    e.g. localhost/profile/shef/shef_a101
+    e.g. localhost:8000/profile/shef/shef_a101
 
 2. All paths use os lib to join. e.g. TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates')
 
