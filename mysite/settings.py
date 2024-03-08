@@ -31,7 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'recipeApp.apps.RecipeappConfig',
+    'userAccount.apps.UseraccountConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -89,7 +89,7 @@ DATABASES = {
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
 
-AUTH_USER_MODEL = "recipeApp.Person"
+AUTH_USER_MODEL = "userAccount.Person"
 
 
 AUTH_PASSWORD_VALIDATORS = [
