@@ -33,9 +33,9 @@ class CustomUserManager(BaseUserManager):
 
 class Role(models.Model):
     ROLES = {
-        "C":"chef",
-        "S":"subscriber",
-        "A":"admin"
+        ("C","chef"),
+        ("S","subscriber"),
+        ("A","admin")
     }
     role = models.CharField(max_length=1, choices=ROLES, unique=True)
 
@@ -83,12 +83,12 @@ class ChefProfile(models.Model):
 class SocialMedia(models.Model):
     chef = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     PLATFORMS = {
-        "TW":"Twitter",
-        "I":"Instagram",
-        "F":"Facebook",
-        "Y":"YouTube",
-        "TK":"TikTok",
-        "S":"Snapchat"
+        ("TW","Twitter"),
+        ("I","Instagram"),
+        ("F","Facebook"),
+        ("Y","YouTube"),
+        ("TK","TikTok"),
+        ("S","Snapchat")
     }
     platform = models.CharField(max_length=2, choices=PLATFORMS)
     handle = models.CharField(max_length=255)
@@ -102,9 +102,9 @@ class ChefSubscription(models.Model):
     title = models.CharField(max_length=255)
     time_quantity = models.PositiveIntegerField()
     TIME_UNITS = {
-        "W":"Week",
-        "M":"Month",
-        "Y":"Year"
+        ("W","Week"),
+        ("M","Month"),
+        ("Y","Year")
     }
     time_unit = models.CharField(max_length=1, choices=TIME_UNITS)
     price = models.DecimalField(max_digits=6, decimal_places=2)
@@ -125,9 +125,9 @@ class SiteSubscription(models.Model):
     title = models.CharField(max_length=255)
     time_quantity = models.PositiveIntegerField()
     TIME_UNITS = {
-        "W":"Week",
-        "M":"Month",
-        "Y":"Year"
+        ("W","Week"),
+        ("M","Month"),
+        ("Y","Year")
     }
     time_unit = models.CharField(max_length=10, choices=TIME_UNITS)
     price = models.DecimalField(max_digits=6, decimal_places=2)
@@ -176,20 +176,20 @@ class Ingredient(models.Model):
     food = models.ForeignKey(Food, on_delete=models.CASCADE)
     quantity = models.DecimalField(max_digits=6, decimal_places=2)
     MEASUREMENTS = {
-        "na":"none",
-        "tsp":"teaspoon",
-        "tbsp":"tablespoon",
-        "cup":"cup",
-        "pt":"pint",
-        "qt":"quart",
-        "gal":"gallon",
-        "oz":"ounce",
-        "fl oz":"fluid ounce",
-        "lb":"pound",
-        "ml":"milliliter",
-        "L":"liter",
-        "g":"gram",
-        "kg":"kilogram"
+        ("na","none"),
+        ("tsp","teaspoon"),
+        ("tbsp","tablespoon"),
+        ("cup","cup"),
+        ("pt","pint"),
+        ("qt","quart"),
+        ("gal","gallon"),
+        ("oz","ounce"),
+        ("fl oz","fluid ounce"),
+        ("lb","pound"),
+        ("ml","milliliter"),
+        ("L","liter"),
+        ("g","gram"),
+        ("kg","kilogram")
     }
     measurement = models.CharField(max_length=15, choices=MEASUREMENTS)
     ingredient_number = models.IntegerField(validators = [MaxValueValidator(999)])

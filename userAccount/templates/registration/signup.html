@@ -4,17 +4,70 @@
 {% block title %}Sign Up{% endblock %}
 
 {% block content %}
-<!-- <style>
-  h2 {text-align: center;}
-  form {text-align: center;}
-  button {text-align: center;}
-  ul {text-align: center;}
-  li {text-align: center;}
-</style> -->
-<h2>Sign up</h2>
-<form method="post">
-  {% csrf_token %}
-  {{ form }}
-  <button type="submit">Sign Up</button>
-</form>
+
+<div class="row justify-content-center align-items-center">
+  <div style="width:22rem;">
+    <h2 class="text-center">Sign up</h2>
+
+    {{form.errors}}
+    <form method="post" action="">
+    
+      {% csrf_token %}
+      <!-- Email input -->
+      <div class="form-outline mb-4">
+        <input name="email" type="email" id="form2Example1" class="form-control" />
+        <label class="form-label" for="form2Example1">Email address</label>
+      </div>
+
+      <!-- Name input -->
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-outline mb-4">
+            <input name="first_name" type="first_name" id="form2Example1" class="form-control" />
+            <label class="form-label" for="form2Example1">First name</label>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-outline mb-4">
+            <input name="last_name" type="last_name" id="form2Example1" class="form-control" />
+            <label class="form-label" for="form2Example1">Last name</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Password input -->
+      <div class="form-outline mb-4">
+        <input name="password1" type="password" id="form2Example2" class="form-control" />
+        <label class="form-label" for="form2Example2">Password</label>
+      </div>
+      <div class="form-outline mb-4">
+        <input name="password2" type="password" id="form2Example2" class="form-control" />
+        <label class="form-label" for="form2Example2">Password confirmation</label>
+      </div>
+          
+      
+
+      <!-- Submit button -->
+      <div class="text-center">
+            <button class="btn btn-lg btn-block btn-primary" style="background-color: #6559e9; width:100%"
+            type="submit">Register</button>
+        
+      
+          
+      <hr class="my-4">
+      
+
+      <!-- Register buttons -->
+      
+        <p>Already have an account? <a href="/user_account/accounts/login">Login</a> or</p>
+
+        
+          <button class="btn btn-lg btn-block btn-primary" style="background-color: #6559e9; width:100%" 
+          type="submit"><i class="fab fa-google me-2"></i> Sign in with google</button>
+      </div>
+    </form>
+</div>
+</div>
+
 {% endblock %}
+
