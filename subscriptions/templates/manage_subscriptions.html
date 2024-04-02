@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Subscriptions{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1>Create Chef Subscription</h1>
+
+    <!-- Subscription Form -->
+    <form method="post">
+      {% csrf_token %}
+      <div class="row">
+          <div class="col-md-3">
+              <div class="form-group">
+                <label for="time_quantity">Time Quantity:</label>
+                  {{ form.time_quantity }}
+              </div>
+          </div>
+          <div class="col-md-3">
+              <div class="form-group">
+                <label for="time_unit">Time Unit:</label>
+                  {{ form.time_unit }}
+              </div>
+          </div>
+          <div class="col-md-3">
+              <div class="form-group">
+                <label for="price">Price:</label>
+                  {{ form.price }}
+              </div>
+          </div>
+      </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+  </form>
+
+    <!-- Display Subscriptions -->
+    {% if chef_subscriptions %}
+        <h2>Subscriptions</h2>
+        <div class="subscription-list">
+            {% for subscription in chef_subscriptions %}
+                <div class="subscription-box">
+                    <p><strong>Title:</strong> {{ subscription.title }}</p>
+                    <p><strong>Time Quantity:</strong> {{ subscription.time_quantity }}</p>
+                    <p><strong>Time Unit:</strong> {{ subscription.get_time_unit_display }}</p>
+                    <p><strong>Price:</strong> {{ subscription.price }}</p>
+                    <button class="btn btn-danger delete-subscription-btn" data-subscription-id="{{ subscription.id }}">Delete</button>
+                    <button class="btn btn-primary edit-subscription-btn" data-subscription-id="{{ subscription.id }}">Edit</button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+    <script>
+      // Delete Subscription AJAX
+      $(document).on('click', '.delete-subscription-btn', function() {
+          var subscriptionId = $(this).data('subscription-id');
+          $.ajax({
+              url: '/delete_subscription/' + subscriptionId + '/',
+              type: 'DELETE',
+              success: function() {
+                  $('#subscription-' + subscriptionId).remove();
+              }
+          });
+      });
+      </script>
+  
+</div>
+{% endblock %}
