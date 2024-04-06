@@ -16,9 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
-
+from products.views import (CreateCheckoutSessionView, ProductLandingPageView)
 urlpatterns = [
     path("user_account/", include("userAccount.urls")),
     path('admin/', admin.site.urls),
-    
+    path('landing-page/', ProductLandingPageView.as_view()),
+    path('create-checkout-session/', CreateCheckoutSessionView.as_view(), name="create-checkout-session")
 ]

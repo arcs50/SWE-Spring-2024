@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     'userAccount.apps.UseraccountConfig',
-    'bootstrap5',
+    'django_bootstrap5',
+    'products'
 ]
 
 MIDDLEWARE = [
@@ -81,7 +82,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'recipe_db',
         'USER': 'root',
-        'PASSWORD': 'root',
+        'PASSWORD': 'rootuser',
         'HOST': 'localhost',
         'PORT': '3306',
     }
@@ -134,3 +135,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL = "home"
 LOGOUT_REDIRECT_URL = "home" 
+
+STRIPE_PUBLIC_KEY= "pk_test_51OyKi703nG7roY1gAxxDR54M7Q2jTOW9Uu3VZAnLhgW1BhiOP3AAmi3MLDyTzfeyg42ovzeaPt9JWNuuey6rZVUp00FsOdQ0Cd"
+STRIPE_SECRET_KEY= "sk_test_51OyKi703nG7roY1gz3kLm2j64qA9v2bGDb0zQUi6nkk9cXXffojwblYpZ7w6S6UehytiLsELxOO4DzvnsIF3j77z00TXhhiqug"
+STRIPE_WEBHOOK_SECRET= ""
