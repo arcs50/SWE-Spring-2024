@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-6^lae5_80)9*mx+eqp6)wq1_vfxs4^o@x^(-0j1_k3&x&8v7^q
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = []
 
 
 # Application definition
@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
+
     'userAccount.apps.UseraccountConfig',
     'recipeApp.apps.RecipeappConfig',
     'subscriptions.apps.SubscriptionsConfig',
@@ -131,8 +131,8 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 
-STATICFILES_DIRS = [ 
-    os.path.join(BASE_DIR, "statics"), 
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "statics"),
 ]
 
 # Default primary key field type
@@ -141,7 +141,7 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL = "home"
-LOGOUT_REDIRECT_URL = "home" 
+LOGOUT_REDIRECT_URL = "home"
 
 EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
 EMAIL_FILE_PATH = BASE_DIR / "sent_emails"
