@@ -12,13 +12,13 @@ from subscriptions.models import SubscriptionToChef
 def index(request):
     return HttpResponse("Hello, world. You're at the recipeApp index.")
 
-def main_site(request):
+def discover(request):
     params = {}   
     if request.user.is_authenticated:
         params['is_authenticated'] = True
         params['avator_dir'] = 'images/sad_cat.jpg'
     
-    return render(request, 'mainsite.html', params)
+    return render(request, 'discover.html', params)
 
 def subscriber_home(request):
     if not request.user.is_authenticated:
