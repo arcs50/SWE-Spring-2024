@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-6^lae5_80)9*mx+eqp6)wq1_vfxs4^o@x^(-0j1_k3&x&8v7^q
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -84,7 +84,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'recipe_app',
         'USER': 'root',
-        'PASSWORD': 'root',
+        'PASSWORD': 'Wsh010217',
         'HOST': 'localhost',
         'PORT': '3306',
     }
