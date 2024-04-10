@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
+
     'userAccount.apps.UseraccountConfig',
     'recipeApp.apps.RecipeappConfig',
     'subscriptions.apps.SubscriptionsConfig',
@@ -84,7 +84,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'recipe_app',
         'USER': 'root',
-        'PASSWORD': 'root',
+        'PASSWORD': '',
         'HOST': 'localhost',
         'PORT': '3306',
     }
@@ -131,8 +131,8 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 
-STATICFILES_DIRS = [ 
-    os.path.join(BASE_DIR, "statics"), 
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, "statics"),
 ]
 
 # Default primary key field type
@@ -141,7 +141,7 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL = "home"
-LOGOUT_REDIRECT_URL = "home" 
+LOGOUT_REDIRECT_URL = "home"
 
 EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
 EMAIL_FILE_PATH = BASE_DIR / "sent_emails"
