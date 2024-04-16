@@ -16,7 +16,42 @@ def discover(request):
     params = {}   
     if request.user.is_authenticated:
         params['is_authenticated'] = True
-        params['avator_dir'] = 'images/sad_cat.jpg'
+        params['avatar_dir'] = 'images/sad_cat.jpg'
+    
+    rec_recipes = [
+        {
+            'recipe_id': '123456',
+            'title': 'whwawhawh',
+            'posted_time': time.time(),
+            'chef_name': 'whawhawa',
+            'first_img_dir': 'images/sad_cat.jpg'
+        },
+        {
+            'recipe_id': '654321',
+            'title': 'whwawhawh',
+            'posted_time': time.time(),
+            'chef_name': 'whawhawa',
+            'first_img_dir': 'images/sad_cat.jpg'
+        }
+    ]
+    
+    rec_chefs = [
+        {
+            'chef_id': '123456',
+            'title': 'whwawhawh',
+            'chef_name': 'whawhawa',
+            'avatar_dir': 'images/sad_cat.jpg'
+        },
+        {
+            'chef_id': '123456',
+            'title': 'whwawhawh',
+            'chef_name': 'whawhawa',
+            'avatar_dir': 'images/sad_cat.jpg'
+        },
+    ]
+    
+    params['rec_recipes'] = rec_recipes
+    params['rec_chefs'] = rec_chefs
     
     return render(request, 'discover.html', params)
 
@@ -43,12 +78,14 @@ def subscriber_home(request):
     params_sample = {
         'sub_id': request.user.id,
         'sub_username': request.user.get_username(),
-        'sub_avator_dir': 'images/sad_cat.jpg',
+        'sub_avatar_dir': 'images/sad_cat.jpg',
         'sub_recipes': sub_recipes
     }
     
     params = {}
-    
-    
 
     return render(request, 'subhomepage.html', params_sample)
+
+def chef_home(request):
+    if not request.user.is_authenticated:
+        return redirect(reverse("signup"))
