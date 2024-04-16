@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    #'django-pdb',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -42,7 +43,8 @@ INSTALLED_APPS = [
     'userAccount.apps.UseraccountConfig',
     'recipeApp.apps.RecipeappConfig',
     'subscriptions.apps.SubscriptionsConfig',
-    'bootstrap5'
+    'bootstrap5',
+    
 ]
 
 MIDDLEWARE = [
@@ -53,6 +55,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    #'django_pdb.middleware.PdbMiddleware',
 ]
 
 ROOT_URLCONF = 'mysite.urls'

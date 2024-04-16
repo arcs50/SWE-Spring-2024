@@ -1,0 +1,52 @@
+<div class="col-md-3">
+  <div class="card subscription-card">
+    <div class="card-body">
+        <form method="post">
+            {% csrf_token %}
+            {{ form.errors }}
+            <div class="mb-3">
+                <!-- <label for="id_title" class="form-label">Subscription Title</label> -->
+                {{ form.title }}
+            </div>
+            <div class="mb-3">
+              {{ form.price }} / {{ form.time_quantity }} {{ form.time_unit }} 
+            </div>
+            <div>
+            <!-- <div class="d-flex justify-content-between align-items-center"> -->
+                  <button name='submit' type="submit" class="btn btn-primary" value="{{subscription.id}}">Create Subscription</button>
+            </div>
+        </form>
+    </div>
+  </div>
+</div>
+
+
+
+
+ <!-- <div class="row">
+    <div class="col-md-4">
+      <div class="form-group">
+        <label for="title">Subscription Title:</label>
+          {{ form.title }}
+      </div>
+    </div>  
+    <div class="col-md-4">
+        <div class="form-group">
+          <label for="time_quantity">Time Quantity:</label>
+            {{ form.time_quantity }}
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group">
+          <label for="time_unit">Time Unit:</label>
+            {{ form.time_unit }}
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="form-group">
+          <label for="price">Price:</label>
+            {{ form.price }}
+        </div>
+    </div>
+</div>
+<button name='submit' type="submit" class="btn btn-primary" value="{{subscription.id}}">Submit</button> -->

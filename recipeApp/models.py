@@ -34,6 +34,7 @@ class SocialMedia(models.Model):
 class Recipe(models.Model):
     chef = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     title = models.CharField(max_length = 255)
+    description = models.TextField(default="*")
     posted_time = models.DateField(default=timezone.now)
     pinned = models.BooleanField(default=False)
     free_to_nonsubscriber = models.BooleanField(default=False)
@@ -56,15 +57,9 @@ class Collection(models.Model):
     def __str__(self):
         return self.title
 
-class Food(models.Model):
-    food = models.CharField(max_length=250, unique=True)
-    
-    def __str__(self):
-        return self.food
-
 class Ingredient(models.Model):
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
-    food = models.ForeignKey(Food, on_delete=models.CASCADE)
+    food = models.CharField(max_length=250)
     quantity = models.DecimalField(max_digits=6, decimal_places=2)
     MEASUREMENTS = {
         ("na","none"),
@@ -83,14 +78,9 @@ class Ingredient(models.Model):
         ("kg","kilogram")
     }
     measurement = models.CharField(max_length=15, choices=MEASUREMENTS)
-    ingredient_number = models.IntegerField(validators = [MaxValueValidator(999)])
-    
-    class Meta:
-        unique_together = ["recipe","ingredient_number"]
 
 class Instruction(models.Model):
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
-    instruction_number = models.PositiveIntegerField(validators = [MaxValueValidator(999)])
     text = models.TextField()
 
     def __str__(self):

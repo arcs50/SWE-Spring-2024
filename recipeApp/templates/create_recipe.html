@@ -1,0 +1,175 @@
+{% extends "template.html" %}
+{% load static %}
+
+
+{% block title %}
+   Create Recipe
+{% endblock title %}
+
+{% block style %}
+        .container-md {
+            background-color: #e8f1ff; /* Example: light gray background */
+            padding: 30px;
+            border-radius: 10px;
+        }
+{% endblock style %}
+
+{% block main_body %}
+    
+    <div class="shadow-sm p-3 mb-5 container-md">
+        <h1 style="text-align: center;">Create a Recipe</h1>
+        <form method="post" action="{% url 'create_recipe' chef_id=chef_id %} ">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            <div class="row">
+                <!--recipe title-->
+                <div class="col">
+                    <div class="mb-3">
+                        {{ form.title.errors }}
+                        <label class="form-label" for="{{ form.title.id_for_label }}">Title</label>
+                        <input class="form-control" type="text" name="{{ form.title.html_name }}" id="{{ form.title.id_for_label }}" value="{{title}}"/>
+                    </div>
+                </div>
+                <!--switches-->
+                <div class="col col-lg-4">
+                    <div class="form-check form-switch">
+                        <label class="form-check-label" for="{{ form.pinned.id_for_label }}">Pin recipe</label>
+                        <input class="form-check-input" type="checkbox" role="switch" name="{{ form.pinned.html_name }}" id="{{ form.pinned.id_for_label }}"/>
+                    </div>
+                    <div class="form-check form-switch">
+                        <label class="form-check-label" for="{{ form.free_to_nonsubscriber.id_for_label }}">Recipe free to view</label>
+                        <input class="form-check-input" type="checkbox" role="switch" name="{{ form.free_to_nonsubscriber.html_name }}" id="{{ form.free_to_nonsubscriber.id_for_label }}"/>
+                    </div>
+                </div>
+            </div>
+        
+        <div class = row>
+            <!--recipe prep time-->
+            <div class="col">
+                <div class="mb-3">
+                    {{ form.prep_time_minutes.errors }}
+                    <label class="form-label" for="{{form.prep_time_minutes.id_for_label}}">Prep Time</label>
+                    <div class="input-group">
+                        <input class="form-control" type="number" name="{{ form.prep_time_minutes.html_name }}" id="{{ form.prep_time_minutes.id_for_label }}" value="{{prep_time_minutes}}"/>
+                        <span class="input-group-text">min</span>
+                    </div>
+                </div>
+            </div>
+            <!--recipe cook time-->
+            <div class="col">
+                <div class="mb-3">
+                    {{ form.cook_time_minutes.errors }}
+                    <label class="form-label" for="{{form.cook_time_minutes.id_for_label}}">Cook Time</label>
+                    <div class="input-group">
+                        <input class="form-control" type="number" name="{{ form.cook_time_minutes.html_name }}" id="{{ form.cook_time_minutes.id_for_label }}" value="{{cook_time_minutes}}"/>
+                        <span class="input-group-text">min</span>
+                    </div>
+                </div>
+            </div>
+            <!--number of servings-->
+            <div class="col">
+                <div class="mb-3">
+                    {{ form.servings.errors }}
+                    <label class="form-label" for="{{form.servings.id_for_label}}">Number of servings</label>
+                    <input class="form-control" type="number" name="{{ form.servings.html_name }}" id="{{ form.servings.id_for_label }}" value="{{servings}}"/>
+                </div>
+            </div>
+        </div>
+        <!--form.description-->
+        <div class="mb-3">
+            {{ form.description.errors }}
+            <label class="form-label" for="{{ form.description.id_for_label }}">Description</label>
+            <textarea class="form-control" type="text" rows="3" name="{{ form.description.html_name }}" id="{{ form.description.id_for_label }}" value="{{description}}"></textarea>
+        </div>
+      
+    <h2>Ingredients</h2>
+      
+        <!-- Management data of formset -->
+        {{ formset.management_data }} 
+      
+        <!-- Using the formset -->
+        {% for form in formset %}
+            <div class="row">
+                <div class="col col-lg-1">
+                    <div class="mb-3">
+                        {{ form.order.errors }}
+                        <label class="form-label" for="{{form.order.id_for_label}}">Order</label>
+                        <input class="form-control" type="number" name="{{ form.order.html_name }}" id="{{ form.order.id_for_label }}" value="{{order}}"/>
+                    </div>
+                </div>
+                <div class="col col-lg-1">
+                    <div class="mb-3">
+                        {{ form.quantity.errors }}
+                        <label class="form-label" for="{{form.quantity.id_for_label}}">Quantity</label>
+                        <input class="form-control" type="number" step="0.01" name="{{ form.quantity.html_name }}" id="{{ form.quantity.id_for_label }}" value="{{quantity}}"/>
+                    </div>
+                </div>
+                <div class="col col-lg-2">
+                    <div class="mb-3">
+                        {{ form.measurement.errors }}
+                        <label class="form-label" for="{{form.measurement.id_for_label}}">Unit</label>
+                        <select class="form-control" type="select" name="{{ form.measurement.html_name }}" id="{{ form.measurement.id_for_label }}">
+                            {% for value, label in form.measurement.field.choices %}
+                                <option value="{{ value }}" {% if form.measurement.value == value %}selected{% elif value == "na" %}selected{% endif %}>{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="mb-3">
+                        {{ form.food.errors }}
+                        <label class="form-label" for="{{ form.food.id_for_label }}">Ingredient</label>
+                        <input class="form-control" type="text" name="{{ form.food.html_name }}" id="{{ form.food.id_for_label }}" value="{{food}}"/>
+                    </div>
+                </div>
+                <div class="col col-lg-1">
+                    <div class="d-flex align-items-center h-100">
+                    <div class="form-check">
+                        {{ form.delete.errors }}
+                        <label class="form-check-label" for="{{ form.delete.id_for_label }}">Delete</label>
+                        <input class="form-check-input" type="checkbox" value="" name="{{ form.delete.html_name }}" id="{{ form.delete.id_for_label }}"/>
+                    </div>
+                </div>
+                </div>
+            </div>
+            {% endfor %}
+            
+              <!--save-->
+            <div class="row">
+                <div class="col-md-12 text-right">
+                    <button type="submit" class="btn btn-primary float-end" name='save_recipe'>Save</button>
+                </div>
+            </div>
+        </form> 
+</div>
+    {% if recipes %}       
+    {% for recipe in recipes %}
+    <div>
+        {{recipe.title}}
+        {{recipe.posted_time}}
+        {{recipe.pinned}}
+        {{recipe.free_to_nonsubscriber}}
+        {{recipe.prep_time_minutes}}
+        {{recipe.cook_time_minutes}}
+        {{recipe.servings}}
+        {{recipe.description}}
+    </div>
+    {% endfor %}
+    {% endif %}
+
+
+  
+             
+              <!-- <div>
+              
+                    <button name='submit' type="submit" class="btn btn-primary" value="{{subscription.id}}">Create Subscription</button>
+              </div> -->
+    
+      
+{% endblock main_body %}
+
+{% block scripts %} 
+
+{% endblock scripts %}
+
+    
