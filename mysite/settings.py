@@ -30,7 +30,7 @@ ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
-SITE_ID = 2  # For django.contrib.sites
+SITE_ID = 3  # For django.contrib.sites
 
 INSTALLED_APPS = [
     'django.contrib.admin',
