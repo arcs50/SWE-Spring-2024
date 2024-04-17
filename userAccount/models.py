@@ -4,7 +4,6 @@ from django.utils import timezone
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 
 
-
 # Create your models here.
 
 class CustomUserManager(BaseUserManager):
@@ -16,7 +15,7 @@ class CustomUserManager(BaseUserManager):
         user.set_password(password)
         user.save(using=self._db)
         return user
-    
+
     def create_superuser(self, email, password=None, **extra_fields):
         extra_fields.setdefault('is_admin', True)
         extra_fields.setdefault('is_superuser', True)
@@ -26,18 +25,20 @@ class CustomUserManager(BaseUserManager):
             raise ValueError('Superuser must have is_admin=True.')
         if extra_fields.get('is_superuser') is not True:
             raise ValueError('Superuser must have is_superuser=True.')
-        user = self.create_user(email=email, password=password,**extra_fields)
-        user.role.add(Role.objects.get(role='A'))
+        user = self.create_user(email=email, password=password, **extra_fields)
+        role, created = Role.objects.get_or_create(role='A')
+        user.role.add(role)
         return user
 
 
 class Role(models.Model):
     ROLES = {
-        ("C","chef"),
-        ("S","subscriber"),
-        ("A","admin")
+        ("C", "chef"),
+        ("S", "subscriber"),
+        ("A", "admin")
     }
     role = models.CharField(max_length=1, choices=ROLES, unique=True)
+
 
 class Person(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=255, unique=True)
@@ -54,20 +55,19 @@ class Person(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
-    
+
     def has_perm(self, perm, obj=None):
-        #"Does the user have a specific permission?"
+        # "Does the user have a specific permission?"
         # Simplest possible answer: Yes, always
         return True
 
     def has_module_perms(self, app_label):
-        #"Does the user have permissions to view the app `app_label`?"
+        # "Does the user have permissions to view the app `app_label`?"
         # Simplest possible answer: Yes, always
         return True
 
     @property
     def is_staff(self):
-        #"Is the user a member of staff?"
+        # "Is the user a member of staff?"
         # Simplest possible answer: All admins are staff
         return self.is_admin
-    

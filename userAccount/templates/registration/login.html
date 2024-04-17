@@ -75,9 +75,11 @@
       
         <p>Not a member? <a href="/user_account/signup">Register</a> or</p>
 
-        
-          <button class="btn btn-lg btn-block btn-primary" style="background-color: #6559e9; width:100%" 
-          type="submit"><i class="fab fa-google me-2"></i> Sign in with google</button>
+          {% load socialaccount %}
+          <a href="{% provider_login_url 'google' %}?next=/" class="btn btn-lg btn-block btn-primary" style="background-color: #6559e9; width:100%">
+            <i class="fab fa-google me-2"></i> Sign in with google</a>
+          <!-- <button class="btn btn-lg btn-block btn-primary" style="background-color: #6559e9; width:100%" 
+          type="submit"><i class="fab fa-google me-2"></i> Sign in with google</button> -->
       </div>
     </form>
 </div>
