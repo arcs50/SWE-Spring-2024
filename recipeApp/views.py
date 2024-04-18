@@ -4,6 +4,7 @@ from django.urls import reverse
 
 import time
 from recipeApp.models import Recipe
+from userAccount.models import Role
 from subscriptions.models import SubscriptionToChef
 
 
@@ -89,3 +90,17 @@ def subscriber_home(request):
 def chef_home(request):
     if not request.user.is_authenticated:
         return redirect(reverse("signup"))
+    role = Role.objects.filter(id=request.user.id)
+    if (not role) or (role[0].role != 'C'):
+        return HttpResponse("You are not a chef.")
+    
+    params = {
+        'chef_id': request.user.id,
+        'chef_username': request.user.get_username(),
+        'chef_avatar_dir': 'images/sad_cat.jpg',
+        'chef_name': 'aaa',
+        'chef_description': 'this is aaa chef.',
+        'chef_display_email': 'xxx@gmail.com'
+    }
+    
+    return render(request, 'chefhome.html', params)

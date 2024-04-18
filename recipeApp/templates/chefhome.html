@@ -10,23 +10,21 @@
 {% endblock style %}
 
 {% block main_body %}
-
     <div class="container overflow-hidden">
-        <div class="row p-1 m-1">
-            <div class="col-4">
-                <p>Welcome, {{sub_id}}: {{sub_username}} </p>
+        <div class="row p-1 m-1" align="center">
+            <p>Welcome, {{chef_id}}: {{chef_username}} </p>
+            <p>{{chef_name}}</p>
+            <figure class="figure">
+                <img src="{% static chef_avatar_dir %}" class="figure-img rounded-circle img-thumbnail img-fluid">
+            </figure>
+            <div class="col-1">
             </div>
-            <div class="col-3">
-                <p class="text-center">
-                    <button type="button" class="btn btn-primary">manage subscription</button>
-                </p>
-            </div>  
-            <div class="col-3">
-                <button type="button" class="btn btn-info">grocery list</button>
-            </div>  
-            <div class="col-2">
-                <img src="{% static sub_avatar_dir %}" class="rounded-circle img-thumbnail img-fluid">
-            </div>    
+            <div class="col-10">
+                <label for="descriptiontext" class="form-label">Description</label>
+                <textarea class="form-control" id="descriptiontext" rows="3"></textarea>
+            </div>
+            <div class="col-1">
+            </div>
         </div>
     </div>
 
