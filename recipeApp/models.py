@@ -41,6 +41,7 @@ class Recipe(models.Model):
     prep_time_minutes = models.PositiveIntegerField(validators = [MaxValueValidator(9999)])
     cook_time_minutes = models.PositiveIntegerField(validators = [MaxValueValidator(9999)])
     servings = models.PositiveIntegerField(validators = [MaxValueValidator(999)])
+    recipe_image = models.ImageField(upload_to='images/',blank=True,null=True)
 
     def __str__(self):
         return self.title
@@ -60,7 +61,7 @@ class Collection(models.Model):
 class Ingredient(models.Model):
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
     food = models.CharField(max_length=250)
-    quantity = models.DecimalField(max_digits=6, decimal_places=2)
+    quantity = models.DecimalField(max_digits=6, decimal_places=2, null=True, blank=True)
     MEASUREMENTS = {
         ("na","none"),
         ("tsp","teaspoon"),
@@ -78,10 +79,22 @@ class Ingredient(models.Model):
         ("kg","kilogram")
     }
     measurement = models.CharField(max_length=15, choices=MEASUREMENTS)
+    order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ['order']
+    
+    def __str__(self):
+        return self.food
+
 
 class Instruction(models.Model):
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
     text = models.TextField()
+    order = models.PositiveIntegerField(default=0)
+    
+    class Meta:
+        ordering = ['order']
 
     def __str__(self):
         return self.text
