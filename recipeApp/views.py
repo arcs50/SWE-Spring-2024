@@ -1,7 +1,8 @@
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
-from django.utils import timezone, reverse
+from django.utils import timezone
+from django.urls import reverse
 from django.db import IntegrityError
 from django.forms.models import modelformset_factory, inlineformset_factory
 from django.contrib.auth.decorators import login_required
