@@ -81,7 +81,20 @@ def subscriber_home(request):
             'avatar_dir': 'images/sad_cat.jpg'
         }
     # get subscribed recipes
-    
+    sub_recipes = []
+    for sub_chef in sub_chefs:
+        chef_recipes = Recipe.objects.filter(chef_id=sub_chef.chef_id)
+        for chef_recipe in chef_recipes:
+            recipe_info = {
+                'recipe_id': chef_recipe.id,
+                'title': chef_recipe.title,
+                'posted_time': chef_recipe.posted_time,
+                'chef_name': sub_chef.chef_name,
+                'first_img_dir': 'images/sad_cat.jpg'
+            }
+            sub_recipes.append(recipe_info)
+    # sort sub_recipes based on post time
+    sub_recipes.sort(key=lambda x:x.posted_time)
     
     # sample params
     sub_recipes = [
@@ -105,6 +118,7 @@ def subscriber_home(request):
         'sub_username': request.user.get_username(),
         'sub_name' : person.first_name + ' ' + person.last_name,
         'sub_avatar_dir': 'images/sad_cat.jpg',
+        'sub_chefs': sub_chefs,
         'sub_recipes': sub_recipes
     }
     
