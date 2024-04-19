@@ -3,9 +3,9 @@ from django.http import HttpResponse
 from django.urls import reverse
 
 import time
-from recipeApp.models import Recipe
-from userAccount.models import Role
-from subscriptions.models import SubscriptionToChef
+from recipeApp.models import Recipe, ChefProfile
+from userAccount.models import Role, Person
+from subscriptions.models import SubscriptionToChef, ChefSubscription
 
 
 # Create your views here.
@@ -59,6 +59,43 @@ def discover(request):
 def subscriber_home(request):
     if not request.user.is_authenticated:
         return redirect(reverse("signup"))
+    
+    # get user profile
+    person = Person.objects.get(id=request.user.id)
+    # get subscription
+    subscriptions = SubscriptionToChef.objects.filter(subscriber_id=request.user.id)
+    valid_subscriptions = []
+    for subscription in subscriptions:
+        if not subscription.blocked:
+            valid_subscriptions.append(subscription)
+    # get subscribed chefs info
+    sub_chefs = []
+    for subscription in valid_subscriptions:
+        chef_subscription = ChefSubscription.objects.get(id=subscription.chef_subscription_id)
+        chef_profile = ChefProfile.objects.get(chef_id=chef_subscription.chef_id)
+        chef_person = Person.objects.get(id=chef_subscription.chef_id)
+        sub_chef = {
+            'chef_id': chef_profile.chef_id,
+            'title': chef_profile.title,
+            'chef_name': chef_person.first_name + ' ' + chef_person.last_name,
+            'avatar_dir': 'images/sad_cat.jpg'
+        }
+    # get subscribed recipes
+    sub_recipes = []
+    for sub_chef in sub_chefs:
+        chef_recipes = Recipe.objects.filter(chef_id=sub_chef.chef_id)
+        for chef_recipe in chef_recipes:
+            recipe_info = {
+                'recipe_id': chef_recipe.id,
+                'title': chef_recipe.title,
+                'posted_time': chef_recipe.posted_time,
+                'chef_name': sub_chef.chef_name,
+                'first_img_dir': 'images/sad_cat.jpg'
+            }
+            sub_recipes.append(recipe_info)
+    # sort sub_recipes based on post time
+    sub_recipes.sort(key=lambda x:x.posted_time)
+    
     # sample params
     sub_recipes = [
         {
@@ -76,16 +113,17 @@ def subscriber_home(request):
             'first_img_dir': 'images/sad_cat.jpg'
         }
     ]
-    params_sample = {
+    params = {
         'sub_id': request.user.id,
         'sub_username': request.user.get_username(),
+        'sub_name' : person.first_name + ' ' + person.last_name,
         'sub_avatar_dir': 'images/sad_cat.jpg',
+        'sub_chefs': sub_chefs,
         'sub_recipes': sub_recipes
     }
     
-    params = {}
 
-    return render(request, 'subhomepage.html', params_sample)
+    return render(request, 'subhomepage.html', params)
 
 def chef_home(request):
     if not request.user.is_authenticated:
