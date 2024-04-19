@@ -17,9 +17,33 @@ class ChefSubscription(models.Model):
     }
     time_unit = models.CharField(max_length=1, choices=TIME_UNITS)
     price = models.DecimalField(max_digits=6, decimal_places=2, validators=[MinValueValidator(Decimal('0.00'))])
+    active = models.BooleanField(default=True)
+
+    class Meta:
+        unique_together = ["chef","title","time_quantity","time_unit","price"]
 
     def __str__(self):
         return self.title
+    
+    def get_caption(self):
+        caption = "$" 
+        if self.price % 1 == 0:
+            caption += str(int(self.price)) + "/"
+        else:
+            caption += str(self.price) + "/"
+        plural = False
+        if self.time_quantity > 1:
+            caption += str(self.time_quantity) + " "
+            plural = True
+        if self.time_unit == 'W':
+            caption += "Week"
+        elif self.time_unit == "M":
+            caption += "Month"
+        elif self.time_unit == "Y":
+            caption += "Year"
+        if plural:
+            caption += "s"
+        return caption
 
 class SubscriptionToChef(models.Model):
     subscriber = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)

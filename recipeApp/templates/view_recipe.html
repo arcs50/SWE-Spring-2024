@@ -1,0 +1,30 @@
+{% extends "template.html" %}
+{% load static %}
+
+
+{% block title %}
+   Create Recipe
+{% endblock title %}
+
+{% block style %}
+        .container-md {
+            background-color: #e8f1ff; /* Example: light gray background */
+            padding: 30px;
+            border-radius: 10px;
+        }
+{% endblock style %}
+
+{% block main_body %}
+    {{recipe.title}}
+    {{recipe.recipe_image}}
+    {{recipe.posted_time}}
+    {{recipe.pinned}}
+    {{recipe.free_to_nonsubscriber}}
+    {{recipe.prep_time_minutes}}
+    {{recipe.cook_time_minutes}}
+    {{recipe.servings}}
+    {{recipe.description}}
+    {% for Ingredient in ingredients %}
+        {{ingredient}}
+    {% endfor %}
+{% endblock main_body %}
