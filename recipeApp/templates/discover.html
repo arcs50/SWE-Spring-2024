@@ -1,0 +1,94 @@
+
+{% extends "template.html" %}
+{% load static %}
+
+{% block title %}
+    Main Site Discover Page
+{% endblock title %}
+
+{% block style %}
+    
+{% endblock style %}
+
+{% block main_body %}
+    <div class="container overflow-hidden">
+        <div class="row p-1 m-1">
+            <div class="col-4">
+                <p>Discover your recipes. </p>
+            </div>
+            <div class="col-6">
+
+            </div>    
+            <div class="col-2">
+                {% if is_authenticated %}
+                <img src="{% static avatar_dir %}" class="rounded-circle img-thumbnail img-fluid">
+                <form action="{% url 'logout' %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary">logout</button>
+                </form>
+                {% else %}
+                <form action="{% url 'signup' %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary">signup</button>
+                </form>
+                {% endif %}
+            </div>    
+        </div>
+    </div>
+    <div class="container overflow-hidden">
+        <form class="row p-1 m-1 form-inline" role="form" action="{% url 'search' %}" method="post">
+            {% csrf_token %}
+            <div class="col-auto">
+                <input type="text" readonly class="form-control-plaintext" value="search chefs: ">
+            </div>
+            <div class="form-group col-auto">
+                <label class="visually-hidden" for="chef_name">chef name</label>
+                <input type="text" class="form-control" id="chef_name" placeholder="chef name">
+            </div>
+            <div class="form-group col-auto">
+                <button type="submit" class="btn btn-primary">go</button>  
+            </div>
+        </form>
+    </div>
+    <div class="container overflow-hidden">
+        <div class="row border border-dark rounded-3 p-1 m-1 gap-1">
+            <p>recommend chefs: </p>
+            {% for rec_chef in rec_chefs %}
+            <div class="col-5 col-md-3">
+                <div class="card">
+                    <img src="{% static rec_chef.avatar_dir %}" class="card-img-top img-thumbnail img-fluid" alt="...">
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">{{ rec_chef.title }}</li>
+                            <li class="list-group-item">{{ rec_chef.chef_name }}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>  
+            {% endfor %}  
+        </div>
+    </div>
+    <div class="container overflow-hidden">
+        <div class="row border border-dark rounded-3 p-1 m-1 gap-1">
+            <p>recommend recipes: </p>
+            {% for rec_recipe in rec_recipes %}
+            <div class="col-5 col-md-3">
+                <div class="card">
+                    <img src="{% static rec_recipe.first_img_dir %}" class="card-img-top img-thumbnail img-fluid" alt="...">
+                    <div class="card-body">
+                        <ul class="list-group list-group-flush">
+                            <li class="list-group-item">{{ rec_recipe.title }}</li>
+                            <li class="list-group-item">{{ rec_recipe.posted_time }}</li>
+                            <li class="list-group-item">{{ rec_recipe.chef_name }}</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>  
+            {% endfor %}  
+        </div>
+    </div>
+{% endblock main_body %}
+
+{% block scripts %} 
+
+{% endblock scripts %}
