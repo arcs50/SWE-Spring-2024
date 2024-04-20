@@ -14,6 +14,10 @@
         <div class="row justify-content-between p-1 m-1">
             <div class="col-auto">
                 <p>Welcome, {{ sub_name }} </p>
+                <form action="{% url 'logout' %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary">logout</button>
+                </form>
             </div>
             <div class="col-auto">
                 <p class="text-center">
