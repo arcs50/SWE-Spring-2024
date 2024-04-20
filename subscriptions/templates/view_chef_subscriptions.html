@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}Manage Subscriptions{% endblock %}
+{% block title %}Subscribe{% endblock %}
 
 {% block style %}
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -21,16 +21,7 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h1>Create a Subscription Plan</h1>
-
-    <!-- Subscription Form -->
-    <form method="post" actions="{% url 'create_chef_subscription' %}">
-        {% csrf_token %}
-        {% if not form.instance.id %}
-        {% include 'save_chef_subscription.html' %}
-        {% endif %}
-        {% if chef_subscriptions %}
-        <h2>Subscriptions</h2>
+    <h1>Subscribe to </h1>
         <div class="row">
             {% for subscription in chef_subscriptions %}
             <div class="col-md-3">
@@ -40,8 +31,7 @@
                         <p class="card-text">{{ subscription.get_caption }}</p>
                         <div class="d-flex justify-content-between align-items-center">
                             <div class="btn-group">
-                                <button formnovalidate name='edit' class="btn btn-icon" value="{{ subscription.id }}"><i class="fas fa-pencil-alt"></i></button>
-                                <button formnovalidate name='delete' class="btn btn-icon" value="{{ subscription.id }}"><i class="fas fa-trash"></i></button>
+                                <button  name='subscribe'>Subscribe</i></button>
                             </div>
                         </div>
                     </div>
@@ -49,7 +39,5 @@
             </div>
             {% endfor %}
         </div>
-        {% endif %}
-    </form>
 </div>
 {% endblock %}
