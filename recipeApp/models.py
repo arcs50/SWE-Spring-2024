@@ -2,6 +2,7 @@ from django.db import models
 from django.conf import settings
 from django.utils import timezone
 from django.core.validators import MaxValueValidator, MinValueValidator
+from userAccount.models import Person
 
 # Create your models here.
 class ChefProfile(models.Model):
@@ -34,7 +35,7 @@ class SocialMedia(models.Model):
 class Recipe(models.Model):
     chef = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     title = models.CharField(max_length = 255)
-    description = models.TextField(default="*")
+    description = models.TextField()
     posted_time = models.DateField(default=timezone.now)
     pinned = models.BooleanField(default=False)
     free_to_nonsubscriber = models.BooleanField(default=False)
@@ -76,22 +77,34 @@ class Ingredient(models.Model):
         ("ml","milliliter"),
         ("L","liter"),
         ("g","gram"),
-        ("kg","kilogram")
+        ("kg","kilogram"),
+        ("slice","slice"),
+        ("slices","slices")
     }
     measurement = models.CharField(max_length=15, choices=MEASUREMENTS)
-    order = models.PositiveIntegerField(default=0)
+    order = models.PositiveIntegerField()
 
     class Meta:
         ordering = ['order']
     
     def __str__(self):
         return self.food
+    
+    def get_quantity(self):
+        if self.quantity == 0:
+            return ''
+        return self.quantity.normalize()
 
+    def get_measurement(self):
+        if self.measurement == 'na':
+            return ' '
+        else:
+            return self.measurement
 
 class Instruction(models.Model):
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
     text = models.TextField()
-    order = models.PositiveIntegerField(default=0)
+    order = models.PositiveIntegerField()
     
     class Meta:
         ordering = ['order']
@@ -102,12 +115,14 @@ class Instruction(models.Model):
 class Comment(models.Model):
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
     commenter = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    comment_parent = models.ForeignKey('self', on_delete=models.CASCADE)
     text = models.TextField()
     posted_time = models.DateField(default=timezone.now)
 
     def __str__(self):
         return self.text
+    def get_commenter(self):
+        person = Person.objects.get(email=self.commenter)
+        return person.first_name
 
 class Rating(models.Model):
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
@@ -125,7 +140,7 @@ class GroceryList(models.Model):
     subscriber = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
 class BookmarkedRecipes(models.Model):
-    recipe = models.ManyToManyField(Recipe)
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
     subscriber = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
 class Address(models.Model):

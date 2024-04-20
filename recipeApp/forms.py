@@ -1,5 +1,5 @@
 from django.forms import ModelForm, TextInput, NumberInput, Select
-from .models import Recipe, Ingredient, Instruction
+from .models import Recipe, Ingredient, Instruction, Rating, Comment
 from django.forms.models import inlineformset_factory
 
 class RecipeForm(ModelForm):
@@ -48,4 +48,10 @@ class InstructionForm(ModelForm):
         self.fields["text"].widget.attrs.update({"class": "form-control", "rows":"1"})
         self.fields["order"].widget.attrs.update({"class":"form-control"})
 
-
+class CommentForm(ModelForm):
+    class Meta:
+        model = Comment
+        exclude = ['recipe','commenter','posted_time']
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["text"].widget.attrs.update({"class": "form-control", "rows":"3"})

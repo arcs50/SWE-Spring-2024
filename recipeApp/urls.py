@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.urls import include, path
 from django.conf.urls.static import static
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.conf import settings
 
 from . import views
@@ -12,4 +13,6 @@ urlpatterns = [
     path("create_recipe/", CreateUpdateRecipe, name="create_recipe"),
     path("update_recipe/<int:recipe_id>", CreateUpdateRecipe, name="update_recipe"),
     path("view_recipe/<int:recipe_id>", ViewRecipe, name="view_recipe")
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+] 
+
+#urlpatterns += staticfiles_urlpatterns()

@@ -7,24 +7,199 @@
 {% endblock title %}
 
 {% block style %}
-        .container-md {
+        .container {
             background-color: #e8f1ff; /* Example: light gray background */
             padding: 30px;
+            border-radius: 10px;
+        }
+        .container-inner{
+            background-color: #e8f1ff; /* Example: light gray background */
+            padding-top: 20px;
             border-radius: 10px;
         }
 {% endblock style %}
 
 {% block main_body %}
-    {{recipe.title}}
-    {{recipe.recipe_image}}
-    {{recipe.posted_time}}
-    {{recipe.pinned}}
-    {{recipe.free_to_nonsubscriber}}
-    {{recipe.prep_time_minutes}}
-    {{recipe.cook_time_minutes}}
-    {{recipe.servings}}
-    {{recipe.description}}
-    {% for Ingredient in ingredients %}
-        {{ingredient}}
-    {% endfor %}
+<div class="container h-100">
+    <div class="container-inner">
+        <div class="row h-100 justify-content-center align-items-center border-bottom">
+            <div class="col-md-4">
+                <h1>{{recipe.title}}</h1>
+                <div class="row">
+                    <div class="col">
+                        {% for _ in avg_rating_full %}
+                            <i class="fa-solid fa-star"></i>
+                        {% endfor %}
+                        {% for _ in avg_rating_partial %}
+                            <i class="fa-regular fa-star-half-stroke"></i>
+                        {% endfor %}
+                        {% for _ in avg_rating_empty %}
+                            <i class="fa-regular fa-star"></i>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <p>Avg: {{avg_rating}}   Rated by {{count_rating}} people</p>
+                    </div>
+                </div>
+                {% if user.is_authenticated %}
+                    <form method="POST">
+                        {% csrf_token %}
+                        {% if bookmarked %}
+                            <button name="bookmark" class="btn btn-outline-secondary"  type="submit"><i class="fa-solid fa-bookmark"></i> Bookmarked</button>
+                        {% else %}
+                            <button name="bookmark" class="btn btn-outline-secondary"  type="submit"><i class="fa-regular fa-bookmark"></i> Bookmark</button>
+                        {% endif %}
+                    </form>
+                {% endif %}
+            </div>
+            <div class="col-md-6 d-flex h-100 justify-content-center">
+                <div class="text-center">
+                    <img src="{{ recipe.recipe_image.url }}">
+                </div>
+            </div>
+            <div>
+                <br>
+            </div>
+        </div>
+    </div>
+    <div class="container-inner">
+        <div class="row  h-100 justify-content-center align-items-center border-bottom">
+            <div class="col-md-4">
+                <div class="row">
+                    <div class="col-lg-3">
+                        <p><b>Created</b></p>
+                        <p><b>Prep time</b></p>
+                        <p><b>Cook time</b></p>
+                    </div>
+                    <div class="col">
+                        <p>{{recipe.posted_time}}</p>
+                        <p>{{recipe.prep_time_minutes}}</p>
+                        <p>{{recipe.cook_time_minutes}}</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                {{recipe.description}}
+            </div>
+            <div>
+                <br>
+            </div>
+        </div>
+    </div>
+    <div class="container-inner">
+        <div class="row  h-100 justify-content-center border-bottom">
+            <div class="col-md-4">
+                <h2>Ingredients</h2>
+                <div class="row">
+                    <div class="col-lg-3">
+                        <b>Servings</b>
+                    </div>
+                    <div class="col">
+                        {{recipe.servings}}
+                    </div>
+                </div>
+                <div>
+                    <br>
+                </div>
+                {% for ingredient in ingredients %}
+                    <div class="row">
+                        <div class="col-lg-1">
+                            {{ingredient.get_quantity}}
+                        </div>
+                        <div class="col-lg-2">
+                            {{ingredient.get_measurement}}
+                        </div>
+                        <div class="col-lg-7">
+                            {{ingredient.food}}
+                        </div>
+                    </div>
+                    <div>
+                        <br>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="col-md-6">
+                <h2>Instructions</h2>
+                {% for instruction in instructions %}
+                    <div class="row">
+                        <div class="col col-lg-2">
+                            <b>Step {{instruction.order}}</b>
+                        </div>
+                        <div class="col">
+                            {{instruction}}
+                        </div>
+                    </div>
+                    <div>
+                        <br>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="container-inner">
+        <div class="row  h-100 justify-content-center border-bottom">
+            <div class="col-md-4">
+                {% if user.is_authenticated %}
+                <h2>Your rating</h2>
+                <div class="row">
+                    <div class="col">
+                        <form method="POST">
+                            {% csrf_token %}
+                            {% for i in rating %}
+                                <button name="star_rated" class="btn btn-icn" type="submit" value="{{i}}"><i class="fa-solid fa-star"></i></button>
+                            {% endfor %}
+                            {% for i in unrated %}
+                                <button name="star_unrated" class="btn btn-icn" type="submit" value="{{i}}"><i class="fa-regular fa-star"></i></button>
+                            {% endfor %}
+                        </form>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            <div class="col-md-6">
+                <h2>Comments</h2>
+                {% if user.is_authenticated %}
+                <form method="POST">
+                    {% csrf_token %}
+                    {{ form.non_field_errors }}
+                    <div class="mb-3">
+                        {{ form.text.errors }}
+                        <label class="form-label" for="{{ form.text.id_for_label }}">Add comment</label>
+                            {{form.text}}
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12 text-right">
+                            <button name="post" class="btn btn-outline-secondary float-end"  type="submit">Post</button>
+                        </div>
+                    </div>
+                </form>
+                <div>
+                    <br>
+                </div>
+                {% endif %}
+                {% if comments %}
+                    {% for comment in comments %}
+                    <div class="row">
+                        <div class="col-lg-9">
+                            <b>{{comment.get_commenter}}</b>
+                        </div>
+                        <div class="col text-secondary">
+                            <small>Posted {{comment.posted_time}}</small>
+                        </div>
+                    </div>
+                    <div>
+                        {{comment.text}}
+                    </div>
+                    <div>
+                        <br>
+                    </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+    </div>
+                            
+</div>
 {% endblock main_body %}

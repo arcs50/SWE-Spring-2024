@@ -1,9 +1,10 @@
+import math
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
-from .forms import RecipeForm, IngredientForm, InstructionForm, IngredientFormSet
+from .forms import RecipeForm, IngredientForm, InstructionForm, IngredientFormSet, CommentForm
 from django.utils import timezone
-from .models import Recipe, Ingredient, Instruction
+from .models import Recipe, Ingredient, Instruction, BookmarkedRecipes, Rating, Comment
 from django.db import IntegrityError
 from django.forms.models import modelformset_factory, inlineformset_factory
 from django.contrib.auth.decorators import login_required
@@ -11,6 +12,7 @@ from django.db import transaction
 from django.conf import settings
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic import ListView
+from django.db.models import Avg
 #import pdb
 # Create your views here.
 
@@ -62,10 +64,66 @@ def CreateUpdateRecipe(request, recipe_id=None):
 
 def ViewRecipe(request, recipe_id):
     recipe = get_object_or_404(Recipe, id=recipe_id)
-    ingredients = Ingredient.objects.filter(id=recipe_id)
+    ingredients = Ingredient.objects.filter(recipe_id=recipe_id)
+    instructions = Instruction.objects.filter(recipe_id=recipe_id)
+    form = CommentForm()
+    try:
+        rating = Rating.objects.get(recipe_id=recipe_id, rater=request.user)
+        rating = rating.stars
+    except Rating.DoesNotExist:
+        rating = 0  
+    bookmarked = False
+    if BookmarkedRecipes.objects.filter(subscriber=request.user, recipe=recipe).count() > 0:
+        bookmarked = True    
+    if request.method == 'POST':
+        if 'bookmark' in request.POST:
+            if not bookmarked:
+                bookmark = BookmarkedRecipes()
+                bookmark.subscriber=request.user
+                bookmark.recipe=recipe
+                bookmark.save()
+                bookmarked = True
+            else:
+                bookmark = BookmarkedRecipes.objects.get(subscriber=request.user, recipe=recipe)
+                bookmark.delete()
+                bookmarked = False
+        elif 'star_rated' in request.POST or 'star_unrated' in request.POST:
+            if 'star_unrated' in request.POST:
+                rating += int(request.POST.get('star_unrated')) + 1
+            elif 'star_rated' in request.POST:
+                rating = int(request.POST.get('star_rated')) + 1
+            instance, created = Rating.objects.get_or_create(recipe_id=recipe_id, rater=request.user)
+            instance.stars = rating
+            instance.save()
+        elif 'post' in request.POST:
+            form = CommentForm(request.POST)
+            if form.is_valid():
+                form = form.save(commit=False)
+                form.recipe = recipe
+                form.commenter = request.user
+                form.save()
+                form = CommentForm()
+    ratings = Rating.objects.filter(recipe_id=recipe_id)
+    count_rating = ratings.count()
+    avg_rating = ratings.aggregate(Avg("stars", default=0))['stars__avg']
+    avg_rating_full = int(avg_rating)
+    avg_rating_partial = math.ceil(avg_rating % 1)
+    avg_rating_empty = 5 - avg_rating_full - avg_rating_partial
+    comments = Comment.objects.filter(recipe_id=recipe_id)
     context= {
         'recipe':recipe,
-        'ingredients':ingredients
+        'ingredients':ingredients,
+        'instructions':instructions,
+        'bookmarked':bookmarked,
+        'count_rating': count_rating,
+        'avg_rating':avg_rating, 
+        'avg_rating_full': range(avg_rating_full),
+        'avg_rating_partial':range(avg_rating_partial),
+        'avg_rating_empty':range(avg_rating_empty),
+        'rating':range(rating),
+        'unrated':range(5-rating),
+        'form':form,
+        'comments':comments
         }
     return render(request, 'view_recipe.html', context)
 
