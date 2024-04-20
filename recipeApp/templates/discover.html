@@ -12,14 +12,11 @@
 
 {% block main_body %}
     <div class="container overflow-hidden">
-        <div class="row p-1 m-1">
-            <div class="col-4">
+        <div class="row justify-content-between p-1 m-1">
+            <div class="col-auto">
                 <p>Discover your recipes. </p>
-            </div>
-            <div class="col-6">
-
-            </div>    
-            <div class="col-2">
+            </div>   
+            <div class="col-auto">
                 {% if is_authenticated %}
                 <img src="{% static avatar_dir %}" class="rounded-circle img-thumbnail img-fluid">
                 <form action="{% url 'logout' %}" method="post">
@@ -54,7 +51,7 @@
         <div class="row border border-dark rounded-3 p-1 m-1 gap-1">
             <p>recommend chefs: </p>
             {% for rec_chef in rec_chefs %}
-            <div class="col-5 col-md-3">
+            <div class="col-auto">
                 <div class="card">
                     <img src="{% static rec_chef.avatar_dir %}" class="card-img-top img-thumbnail img-fluid" alt="...">
                     <div class="card-body">
@@ -72,7 +69,7 @@
         <div class="row border border-dark rounded-3 p-1 m-1 gap-1">
             <p>recommend recipes: </p>
             {% for rec_recipe in rec_recipes %}
-            <div class="col-5 col-md-3">
+            <div class="col-auto">
                 <div class="card">
                     <img src="{% static rec_recipe.first_img_dir %}" class="card-img-top img-thumbnail img-fluid" alt="...">
                     <div class="card-body">
