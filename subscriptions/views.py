@@ -7,6 +7,17 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.urls import reverse_lazy
 from .models import ChefSubscription
 from recipeApp.models import ChefProfile
+import Stripe
+import os
+from flask import redirect
+from django.conf import settings
+from django.http import HttpResponseRedirect
+from django.views import View
+from django.views.generic import TemplateView
+
+stripe.api_key= settings.STRIPE_SECRET_KEY
+YOUR_DOMAIN="http://127.0.0.1:8000"
+
 
 # Create your views here.
 def site_subscription(request):
@@ -66,3 +77,19 @@ def subscribeToChef(request, chef_id):
     return render(request, 'view_chef_subscriptions.html', context)
 
 
+
+class CreateCheckoutSessionView(View):
+    def post(self, request, *args, ** kwargs):
+        checkout_session = stripe.checkout.Session.create(
+            line_items=[
+                {
+                    # Provide the exact Price ID (for example, pr_1234) of the product you want to sell
+                    'price': 'price_1P1aLg03nG7roY1gYXubQV0e',
+                    'quantity':1
+                },
+            ],
+            mode='payment',
+            success_url=YOUR_DOMAIN + '/success.html',
+            cancel_url=YOUR_DOMAIN + '/cancel.html',
+        )
+        return HttpResponseRedirect(checkout_session.url)
