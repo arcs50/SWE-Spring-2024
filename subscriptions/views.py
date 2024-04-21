@@ -44,11 +44,25 @@ def ManageSubscriptionView(request):
     return render(request, 'manage_subscriptions.html', context)
         
 
+
+from django.shortcuts import get_object_or_404, render
+from .models import ChefSubscription, SiteSubscription
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
 def subscribeToChef(request, chef_id):
-    context = {}
-    #chef_title = ChefProfile.objects.get(chef_id = chef_id).title
-    #context['title'] = chef_title
-    chef_subscriptions = ChefSubscription.objects.filter(chef_id=chef_id, active = True)
-    context['chef_subscriptions'] = chef_subscriptions
+    # chef = get_object_or_404(User, pk=chef_id)
+    chef_subscriptions = ChefSubscription.objects.filter(chef_id=request.user.id)
+    print(chef_subscriptions[0])
+    # If you have a model for chef profile, fetch it here, e.g.,
+    # chef_profile = ChefProfile.objects.get(user=chef)
+
+    context = {
+        #'chef': chef,
+        'chef_subscriptions': chef_subscriptions,
+        # 'chef_profile': chef_profile, if you have a separate model for chef profiles
+    }
     return render(request, 'view_chef_subscriptions.html', context)
+
 
