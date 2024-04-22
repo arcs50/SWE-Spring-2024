@@ -1,0 +1,91 @@
+{% load static %}
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="{% url 'discover' %}">Cooking Master</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="#">Explore</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Our Chefs</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Recipe
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="#">Italian</a></li>
+              <li><a class="dropdown-item" href="#">Mexican</a></li>
+              <li><a class="dropdown-item" href="#">Japanese</a></li>
+              <li><a class="dropdown-item" href="#">Korean</a></li>
+              <li><a class="dropdown-item" href="#">Thai</a></li>
+              <li><a class="dropdown-item" href="#">Greek</a></li>
+              <li><a class="dropdown-item" href="#">Chinese</a></li>
+              <li><a class="dropdown-item" href="#">French</a></li>
+              <li><a class="dropdown-item" href="#">Indian</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="#">Others</a></li>
+            </ul>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Ingredient
+            </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="#">Beef</a></li>
+              <li><a class="dropdown-item" href="#">Chicken</a></li>
+              <li><a class="dropdown-item" href="#">Pork</a></li>
+              <li><a class="dropdown-item" href="#">Egg</a></li>
+              <li><a class="dropdown-item" href="#">Bean</a></li>
+              <li><a class="dropdown-item" href="#">Rice</a></li>
+              <li><a class="dropdown-item" href="#">Noodle</a></li>
+              <li><a class="dropdown-item" href="#">Broccoli</a></li>
+              <li><a class="dropdown-item" href="#">Carrot</a></li>
+              <li><a class="dropdown-item" href="#">Spinach</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="#">Others</a></li>
+            </ul>
+          </li>
+        </ul>
+
+
+        <form class="d-flex me-2" role="search">
+          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+          <button class="btn btn-outline-success" type="submit">Search</button>
+        </form>
+
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        {% if user.is_authenticated %}
+          <li class="nav-item dropdown  d-flex me-2">
+          <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            Profile
+          </a>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="#">My Profile</a></li>
+              <li><a class="dropdown-item" href="#">My Recipes</a></li>
+              <li><a class="dropdown-item" href="#">My Subscriptions</a></li>
+              <li><a class="dropdown-item" href="#">My Followers</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" href="#">Settings</a></li>
+            </ul>
+          <li class="nav-item">
+            <form action="{% url 'logout' %}" method="post">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-primary d-flex me-2">Logout</button>
+            </form>
+          </li>
+          {% else %}
+          <li class="nav-item">
+
+            <a class="btn btn-primary me-2" href="{% url 'login' %}">Login</a>
+            <a class="btn btn-secondary" href="{% url 'signup' %}">Signup</a>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+    </div>
+  </nav>
