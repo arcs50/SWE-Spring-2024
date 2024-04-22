@@ -18,6 +18,7 @@ class ChefSubscription(models.Model):
     time_unit = models.CharField(max_length=1, choices=TIME_UNITS)
     price = models.DecimalField(max_digits=6, decimal_places=2, validators=[MinValueValidator(Decimal('0.00'))])
     active = models.BooleanField(default=True)
+    stripe_price_id = models.CharField(max_length=50, blank=True, null=True)
 
     class Meta:
         unique_together = ["chef","title","time_quantity","time_unit","price"]
