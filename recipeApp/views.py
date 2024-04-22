@@ -10,11 +10,12 @@ from django.db import transaction
 from django.conf import settings
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic import ListView
+from django.http import JsonResponse
 #import pdb
 
 import time
-from recipeApp.forms import RecipeForm, IngredientForm, InstructionForm, IngredientFormSet
-from recipeApp.models import Recipe, ChefProfile, Ingredient, Instruction
+from recipeApp.forms import RecipeForm, IngredientForm, InstructionForm, SocialMediaForm, ChefProfileForm,IngredientFormSet
+from recipeApp.models import Recipe, ChefProfile, Ingredient, Instruction, SocialMedia
 from userAccount.models import Role, Person
 from subscriptions.models import SubscriptionToChef, ChefSubscription
 
@@ -221,20 +222,153 @@ def subscriber_home(request):
 
     return render(request, 'subhomepage.html', params)
 
-def chef_home(request):
+# chef profile page
+# def edit_chef_home(request, chef_id):
+#     # check login
+#     if not request.user.is_authenticated:
+#         return redirect(reverse("signup"))
+#     # check chef role
+#     if not request.user.role.filter(role='C').exists():
+#         return HttpResponse("You are not a chef.")
+#     # check user id
+#     if chef_id != request.user.id:
+#         return HttpResponse("You have no access to this page.")
+    
+#     # chef_id = request.user.id
+#     recipes = Recipe.objects.filter(chef_id = request.user.id)
+#     # chef_profile = ChefProfile()
+    
+#     # if already have chef profile:
+#     if ChefProfile.objects.filter(chef_id = request.user.id).exists(): 
+#         chef_profile = get_object_or_404(ChefProfile, id = chef_id)
+#     else:
+#         chef_profile = ChefProfile()
+    
+
+#     social_media_queryset = SocialMedia.objects.filter(chef_id=chef_id)
+
+#     SocialMediaFormSet = modelformset_factory(SocialMedia, form=SocialMediaForm, extra=1, can_delete=True, can_delete_extra=True)
+
+#     if request.method == 'POST' and 'save_profile' in request.POST: # update
+#         form = ChefProfileForm(request.POST, request.FILES, instance = chef_profile)
+#         social_media_formset = SocialMediaFormSet(request.POST, queryset=social_media_queryset)
+#         if form.is_valid() and social_media_formset.is_valid():
+#             try:
+#                 with transaction.atomic():
+#                     saved_profile = form.save(commit=False)
+#                     saved_profile.chef_id = request.user.id
+#                     saved_profile.save()
+#                     social_media_formset.save()
+#                     return redirect('successfully saved')
+#                     # return redirect('view_chef_home', recipe_id = saved_profile.id)
+#             except Exception as e:  
+#                 form.add_error(None, f'An error occurred: {str(e)}')
+#                 # return JsonResponse({'success': False, 'error_message': str(e)}, status=400)
+#         else: 
+#             print(social_media_formset.errors)
+#     else: # create a new one
+#         form = ChefProfileForm(instance = chef_profile)
+#         social_media_formset = SocialMediaFormSet(queryset=social_media_queryset) 
+
+    
+#     params = {
+#         'chef_id': chef_id,
+#         'recipes': recipes,
+#         'form': form,
+#         'social_media_formset': social_media_formset
+#     }
+    
+#     return render(request, 'edit_chef_home.html', params)
+
+
+def edit_chef_home(request, chef_id):
+    # check login
     if not request.user.is_authenticated:
         return redirect(reverse("signup"))
-    role = Role.objects.filter(id=request.user.id)
-    if (not role) or (role[0].role != 'C'):
+    # check chef role
+    if not request.user.role.filter(role='C').exists():
         return HttpResponse("You are not a chef.")
+    # check user id
+    if chef_id != request.user.id:
+        return HttpResponse("You have no access to this page.")
+    
+    # chef_id = request.user.id
+    recipes = Recipe.objects.filter(chef_id = request.user.id)
+    # chef_profile = ChefProfile()
+    
+    # if already have chef profile:
+    # if ChefProfile.objects.filter(chef_id = request.user.id).exists(): 
+    #     chef_profile = ChefProfile.objects.filter(chef_id = request.user.id)
+    # else:
+    #     chef_profile = ChefProfile()
+    chef_profile, created = ChefProfile.objects.get_or_create(chef_id=request.user.id)
+    
+    # if SocialMedia.objects.filter(chef_id = request.user.id).exists(): 
+    #     social_media = SocialMedia.objects.filter(chef_id = request.user.id)
+    # else:
+    #     social_media = SocialMedia()
+    social_media, created = SocialMedia.objects.get_or_create(chef_id=request.user.id)
+
+    if request.method == 'POST' and 'save_profile' in request.POST: # update
+        form = ChefProfileForm(request.POST, request.FILES, instance = chef_profile)
+        social_media_form = SocialMediaForm(request.POST, instance = social_media)
+        if form.is_valid() and social_media_form.is_valid():
+            try:
+                with transaction.atomic():
+                    saved_profile = form.save(commit=False)
+                    saved_profile.chef_id = request.user.id
+                    saved_profile.save()
+                    saved_media = social_media_form.save(False)
+                    saved_media.chef_id = request.user.id
+                    social_media_form.save()
+                    messages.success(request, 'Successfully saved')
+                    return redirect('edit_chef_home', chef_id=chef_id)
+                    # return redirect('view_chef_home', recipe_id = saved_profile.id)
+            except Exception as e:  
+                form.add_error(None, f'An error occurred: {str(e)}')
+                # return JsonResponse({'success': False, 'error_message': str(e)}, status=400)
+        else: 
+            print(social_media_form.errors)
+    else: # create a new one
+        form = ChefProfileForm(instance = chef_profile)
+        social_media_form = SocialMediaForm(instance = social_media) 
+
     
     params = {
-        'chef_id': request.user.id,
-        'chef_username': request.user.get_username(),
-        'chef_avatar_dir': 'images/sad_cat.jpg',
-        'chef_name': 'aaa',
-        'chef_description': 'this is aaa chef.',
-        'chef_display_email': 'xxx@gmail.com'
+        'chef_id': chef_id,
+        'recipes': recipes,
+        'form': form,
+        'social_media_form': social_media_form
     }
     
-    return render(request, 'chefhome.html', params)
+    return render(request, 'edit_chef_home.html', params)
+
+def view_chef_home(request, chef_id):
+    # check login
+    if not request.user.is_authenticated:
+        return redirect(reverse("signup"))
+    
+    recipes = Recipe.objects.filter(chef_id = request.user.id)
+    chef_profile = get_object_or_404(ChefProfile, chef_id = chef_id)
+    # social_media = SocialMedia.objects.filter(id = chef_id)
+    social_media = get_object_or_404(SocialMedia, chef_id = chef_id)
+    params = {
+        'chef_id': chef_id,
+        'recipes': recipes,
+        'chef_profile': chef_profile,
+        'social_media': social_media
+    }
+
+    return render(request, 'view_chef_home.html', params)
+
+def recipe_sort(request):
+    sort_criteria = request.GET.get('sort', 'newest')  # Default to sorting by newest
+    if sort_criteria == 'newest':
+        recipes = Recipe.objects.order_by('-posted_time')  # Sort by newest
+    else:
+        recipes = Recipe.objects.order_by('posted_time')   # Sort by oldest
+
+    # Serialize the recipes and return as JSON response
+    serialized_recipes = [{'title': recipe.title, 'recipe_image': recipe.recipe_image.url, 'url': recipe.get_absolute_url()} for recipe in recipes]
+    return JsonResponse(serialized_recipes, safe=False)
+

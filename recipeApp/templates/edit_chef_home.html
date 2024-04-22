@@ -1,0 +1,237 @@
+
+{% extends "template.html" %}
+{% load static %}
+
+{% block title %}
+    Edit Chef Home
+{% endblock title %}
+
+{% block style %}
+    .container-md {
+        background-color: #e8f1ff; /* Example: light gray background */
+        padding: 30px;
+        border-radius: 10px;
+    }
+{% endblock style %}
+
+{% block main_body %}
+<div class="shadow-sm p-3 mb-5 container-md">
+    <h1>Edit Chef Home</h1>
+
+    {% if messages %}
+    <div class="alert alert-success" role="alert">
+        {% for message in messages %}
+            {{ message }}
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data" id="chef-profile-form">
+        {% csrf_token %}
+        <!-- Chef Profile Form -->
+        <div class="row">
+            <div class="col-auto">
+                <img id="uploaded-image" src="#" alt="Uploaded Image" style="max-width: 100%; width: 150px; height: 150px;" class="rounded-circle">
+            </div>
+
+            <div class="col">
+                <div class="mb-3">
+                    {{ form.title.errors }}
+                    <label class="form-label" for="{{ form.title.id_for_label }}">User Name</label>
+                    <div class="col-md-4">
+                        {{ form.title }}
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    {{form.profile_image.errors}}
+                    <label class="form-label" for="{{ form.profile_image.id_for_label }}">Upload Photo</label>
+                    <div class="col-md-4">
+                        {{form.profile_image}}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+
+        <div class="mb-3">
+            {{ form.description.errors }}
+            <label class="form-label" for="{{ form.description.id_for_label }}">Description</label>
+            <input type="text" class="form-control" id="{{ form.description.id_for_label }}" name="{{ form.description.name }}" placeholder="Introduce yourself">
+        </div>
+
+        <div class="mb-3 form-check">
+            {{ form.display_email.errors }}
+            <input type="checkbox" class="form-check-input" id="{{ form.display_email.id_for_label }}" name="{{ form.display_email.name }}" {{ form.display_email.value|yesno:"checked," }} />
+            <label class="form-check-label" for="{{ form.display_email.id_for_label }}">Display Email</label>
+            <span class="text-muted" id="user-email" style="display: none;">{{ request.user.email }}</span>
+        </div>
+    
+        <!-- Social Media Formset -->
+        <h2>Social Media</h2>
+            <div class="row">
+                <div class="col-auto">
+                    <div class="mb-3">
+                        <label for="id_platform" class="form-label">Platform</label>
+                        {{ social_media_form.platform }}
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label for="id_url" class="form-label">URL</label>
+                        {{ social_media_form.url }}
+                    </div>
+                </div>
+                <!-- <div class="col-md-4">
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" id="id_DELETE" name="DELETE" class="form-check-input">
+                        <label for="id_DELETE" class="form-check-label">Delete</label>
+                    </div>
+                </div> -->
+            </div>
+            
+            <div class="mb-3">
+                <button type="submit" class="btn btn-primary" name="save_profile">Save</button>
+            </div>  
+            <div class="mb-3">
+                <a href="{% url 'view_chef_home' chef_id=chef_id %}" class="btn btn-secondary">Back to Homepage</a>
+            </div>          
+
+
+        <h2>Update and Add Recipes</h2>
+        <div class="row">
+            {% for recipe in recipes %}
+            <div class="col-md-3 mb-4">
+                <div class="recipe-item" style="height: 100%; display: flex; flex-direction: column; justify-content: center;">
+                    <img src="{{ recipe.recipe_image.url }}" alt="{{ recipe.title }}" class="img-fluid recipe-image rounded" style="height: 200px; width: 100%; object-fit: cover;">
+                    <h5 class="mt-2">
+                        <a href="{% url 'update_recipe' recipe.id %}" style="text-decoration: underline;">{{ recipe.title }}</a>
+                    </h5>
+                </div>
+            </div>
+            {% empty %}
+            <!-- Add a placeholder if there are no recipes -->
+            <div class="col-md-3 mb-4">
+                <div class="recipe-item" style="height: 100%; display: flex; flex-direction: column; justify-content: center;">
+                    <p>No recipes found</p>
+                </div>
+            </div>
+            {% endfor %}
+            
+            <!-- Button will be added after the last recipe -->
+            <div class="col-md-3 mb-4">
+                <div class="recipe-item" style="height: 100%; display: flex; flex-direction: column; justify-content: center;">
+                    <a href="{% url 'create_recipe' %}" class="btn btn-lg rounded" style="height: 200px; width: 100%; display: flex; justify-content: center; align-items: center; background-color: transparent; border-color: lightgray; color: lightgray; font-size: 48px;">
+                        +
+                    </a>
+                </div>
+            </div>
+        </div>    
+
+    <!-- </div> -->
+    
+    
+
+
+    </form>
+</div>
+{% endblock main_body %}
+
+{% block scripts %} 
+
+<script>
+        // email
+        const displayEmailCheckbox = document.querySelector("#{{ form.display_email.id_for_label }}");
+        const userEmailSpan = document.querySelector("#user-email");
+
+        displayEmailCheckbox.addEventListener('change', function() {
+            if (this.checked) {
+                userEmailSpan.style.display = "inline"; // Show the email text
+            } else {
+                userEmailSpan.style.display = "none"; // Hide the email text
+            }
+        });
+</script>
+
+<script>
+        // image
+        const inputElement = document.querySelector('input[type="file"]');
+        const imageElement = document.getElementById('uploaded-image');
+
+        inputElement.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imageElement.src = e.target.result;
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+</script>
+
+<!-- <script>
+    // social media
+    document.addEventListener('DOMContentLoaded', function() {
+        const container = document.querySelector("#social-media-form-container"); 
+        const addButton = document.querySelector("#add-social-media-btn");
+        const totalForms = document.querySelector("#id_social_media-TOTAL_FORMS"); // Define totalForms here
+
+        console.log("Total Forms Element:", totalForms);
+        if (container && addButton && totalForms) {  
+            const originalForm = container.querySelector('.social-media-form'); 
+
+            addButton.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                let formNum = container.querySelectorAll('.social-media-form').length; // Get the number of current forms
+                let newForm = originalForm.cloneNode(true); // Clone the first form
+                    
+                // Update form index and names/ids
+                newForm.innerHTML = newForm.innerHTML.replace(/form-\d+-/g, `form-${formNum}-`);
+                newForm.innerHTML = newForm.innerHTML.replace(/id_social_media-\d+-/g, `id_social_media-${formNum}-`);
+                newForm.innerHTML = newForm.innerHTML.replace(/social_media-\d+-/g, `social_media-${formNum}-`);
+                const inputs = newForm.querySelectorAll(`#id_social_media-${formNum}-id`);
+                inputs.forEach((input) => {
+                    input.removeAttribute('value');
+                });
+                container.insertBefore(newForm, addButton);
+                totalForms.setAttribute('value', `${formNum+1}`); // Increment the total form count
+            });
+        }
+    });
+</script> -->
+
+<!-- <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const container = document.querySelector("#social-media-form-container"); 
+        const addButton = document.querySelector("#add-social-media-btn");
+        const totalForms = document.querySelector("#id_social_media-TOTAL_FORMS");
+
+        console.log("Total Forms Element:", totalForms);
+        if (container && addButton && totalForms) {  
+            const originalForm = container.querySelector('.social-media-form'); 
+
+            addButton.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                let formNum = container.querySelectorAll('.social-media-form').length; // Get the number of current forms
+                let newForm = originalForm.cloneNode(true); // Clone the first form
+                    
+                // Update form index and names/ids
+                newForm.innerHTML = newForm.innerHTML.replace(/form-\d+-/g, `form-${formNum}-`);
+                newForm.innerHTML = newForm.innerHTML.replace(/id_social_media-\d+-/g, `id_social_media-${formNum}-`);
+                newForm.innerHTML = newForm.innerHTML.replace(/social_media-\d+-/g, `social_media-${formNum}-`);
+                const inputs = newForm.querySelectorAll(`#id_social_media-${formNum}-id`);
+                inputs.forEach((input) => {
+                    input.removeAttribute('value');
+                });
+                container.insertBefore(newForm, addButton);
+                totalForms.setAttribute('value', `${formNum+1}`); // Increment the total form count
+            });
+        }
+    });
+</script> -->
+
+
+{% endblock scripts %}

@@ -9,12 +9,14 @@ class ChefProfile(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
     display_email = models.BooleanField(default=False)
+    profile_image = models.ImageField(upload_to='images/',blank=True,null=True)
 
     def __str__(self):
         return self.title, self.description
 
 class SocialMedia(models.Model):
-    chef = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    # chef = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    chef = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     PLATFORMS = {
         ("TW","Twitter"),
         ("I","Instagram"),
@@ -25,7 +27,7 @@ class SocialMedia(models.Model):
     }
     platform = models.CharField(max_length=2, choices=PLATFORMS)
     handle = models.CharField(max_length=255)
-    url = models.URLField(max_length=255)
+    url = models.TextField()
 
     def __str__(self):
         return self.handle

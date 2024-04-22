@@ -18,10 +18,12 @@ class SignUpView(CreateView):
     
 def to_chef_role(request):
     if request.POST:
-        obj, created = Role.objects.update_or_create(
-            id=request.user.id,
-            defaults={'id': request.user.id, 'role': 'C'}
-        )
-        return HttpResponse("You are a chef now.")
+        user = request.user
+        chef_role, created = Role.objects.get_or_create(role='C', defaults={'role': 'Chef'})
+        if chef_role not in user.role.all():
+            user.role.add(chef_role)
+            return HttpResponse("You are a chef now.")
+        else:
+            return HttpResponse("You are already a chef.")
     else:
-        return HttpResponse("something wrong")
+        return HttpResponse("Something went wrong.")

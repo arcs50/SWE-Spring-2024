@@ -1,0 +1,105 @@
+{% extends "template.html" %}
+{% load static %}
+
+{% block title %}
+    Chef Home Page
+{% endblock title %}
+
+{% block style %}
+        .container-md {
+            background-color: #e8f1ff; /* Example: light gray background */
+            padding: 30px;
+            border-radius: 10px;
+}
+{% endblock style %}
+
+{% block main_body %}
+<div class="shadow-sm p-3 mb-5 container-md">
+    <br>
+    <a href="{% url 'edit_chef_home' chef_id=chef_profile.chef_id %}" class="btn btn-primary position-absolute top-1 end-0.1">Edit Profile</a>
+    <br><br><br><br><br><br><br>
+
+    <div class="mb-4 row align-items-center">
+        <div class="col-auto">
+            {% if chef_profile.profile_image %}
+                <img src="{{ chef_profile.profile_image.url }}" alt="Profile Image" style="max-width: 100%; width: 150px; height: 150px;" class="rounded-circle">
+            {% else %}
+                <p>No profile image available</p>
+            {% endif %}
+        </div>
+        <div class="col">
+            <h2>{{ chef_profile.title }}</h2> 
+            <p><span class="text-muted">{{ request.user.email }}</span></p>
+            <p>{{ chef_profile.description }}</p>
+            {% if social_media.platform == 'TW' %}
+                {% with 'Twitter.png' as image_filename %}
+                    <a href="{{ social_media.url }}" target="_blank">
+                        <img src="{% static 'images/' %}{{ image_filename }}" alt="Twitter" width="37.5" height="auto">
+                    </a>
+                {% endwith %}
+            {% elif social_media.platform == 'I' %}
+                {% with 'Instagram.png' as image_filename %}
+                    <a href="{{ social_media.url }}" target="_blank">
+                        <img src="{% static 'images/' %}{{ image_filename }}" alt="Instagram" width="37.5" height="auto">
+                    </a>
+                {% endwith %}
+            {% elif social_media.platform == 'F' %}
+                {% with 'Facebook.png' as image_filename %}
+                    <a href="{{ social_media.url }}" target="_blank">
+                        <img src="{% static 'images/' %}{{ image_filename }}" alt="Facebook" width="37.5" height="auto">
+                    </a>
+                {% endwith %}
+            {% elif social_media.platform == 'Y' %}
+                {% with 'YouTube.png' as image_filename %}
+                    <a href="{{ social_media.url }}" target="_blank">
+                        <img src="{% static 'images/' %}{{ image_filename }}" alt="YouTube" width="37.5" height="auto">
+                    </a>
+                {% endwith %}
+            {% elif social_media.platform == 'TK' %}
+                {% with 'TikTok.png' as image_filename %}
+                    <a href="{{ social_media.url }}" target="_blank">
+                        <img src="{% static 'images/' %}{{ image_filename }}" alt="TikTok" width="37.5" height="auto">
+                    </a>
+                {% endwith %}
+            {% elif social_media.platform == 'S' %}
+                {% with 'Snapchat.png' as image_filename %}
+                    <a href="{{ social_media.url }}" target="_blank">
+                        <img src="{% static 'images/' %}{{ image_filename }}" alt="Snapchat" width="37.5" height="auto">
+                    </a>
+                {% endwith %}
+            {% endif %}
+        </div>
+        
+    </div>
+    
+</div>
+
+<div class=container>
+    <div class="row">
+        {% for recipe in recipes %}
+        <div class="col-md-3 mb-4">
+            <div class="recipe-item" style="height: 100%; display: flex; flex-direction: column; justify-content: center;">
+                <img src="{{ recipe.recipe_image.url }}" alt="{{ recipe.title }}" class="img-fluid recipe-image rounded" style="height: 200px; width: 100%; object-fit: cover;">
+                <h5 class="mt-2">
+                    <a href="{% url 'view_recipe' recipe.id %}" style="text-decoration: underline;">{{ recipe.title }}</a>
+                </h5>
+            </div>
+        </div>
+        {% empty %}
+        <!-- Add a placeholder if there are no recipes -->
+        <div class="col-md-3 mb-4">
+            <div class="recipe-item" style="height: 100%; display: flex; flex-direction: column; justify-content: center;">
+                <p>No recipes found</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    
+</div>
+
+
+{% endblock main_body %}
+
+{% block scripts %} 
+
+{% endblock scripts %}

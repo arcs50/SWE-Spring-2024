@@ -9,7 +9,8 @@ from .views import CreateUpdateRecipe, ViewRecipe
 urlpatterns = [
     path("discover", views.discover, name="discover"),
     path("subscriberhome", views.subscriber_home, name="subscriber_home"),
-    path("chefhome", views.index, name="index"),
+    path("edit_chef_home/<int:chef_id>", views.edit_chef_home, name="edit_chef_home"),
+    path("view_chef_home/<int:chef_id>", views.view_chef_home, name="view_chef_home"),
     path("search", views.index, name="search"),
     path("create_recipe/", CreateUpdateRecipe, name="create_recipe"),
     path("update_recipe/<int:recipe_id>", CreateUpdateRecipe, name="update_recipe"),
