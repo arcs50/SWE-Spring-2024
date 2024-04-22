@@ -70,10 +70,12 @@ def discover(request):
     
     return render(request, 'discover.html', params)
 
+@login_required
 def CreateUpdateChefProfile(request, chef_prof_id=None):
     chef_prof = ChefProfile()
     if chef_prof_id:
         chef_prof = get_object_or_404(ChefProfile, id=chef_prof_id)
+        #if chef_prof.chef != request.user:
     SocialMediaFormSet = inlineformset_factory(ChefProfile, SocialMedia, form=SocialMediaForm, extra=1, can_delete=True, can_delete_extra=True)
     if request.method =='POST' and 'save_chef_prof' in request.POST:
         form = ChefProfileForm(request.POST, request.FILES, instance=chef_prof)
@@ -140,45 +142,51 @@ def CreateUpdateRecipe(request, recipe_id=None):
 
 def ViewRecipe(request, recipe_id):
     recipe = get_object_or_404(Recipe, id=recipe_id)
+    is_chef = False
+    if request.user.is_authenticated:
+        if recipe.chef == request.user:
+            is_chef = True
     ingredients = Ingredient.objects.filter(recipe_id=recipe_id)
     instructions = Instruction.objects.filter(recipe_id=recipe_id)
     form = CommentForm()
-    try:
-        rating = Rating.objects.get(recipe_id=recipe_id, rater=request.user)
-        rating = rating.stars
-    except Rating.DoesNotExist:
-        rating = 0  
     bookmarked = False
-    if BookmarkedRecipes.objects.filter(subscriber=request.user, recipe=recipe).count() > 0:
-        bookmarked = True    
-    if request.method == 'POST':
-        if 'bookmark' in request.POST:
-            if not bookmarked:
-                bookmark = BookmarkedRecipes()
-                bookmark.subscriber=request.user
-                bookmark.recipe=recipe
-                bookmark.save()
-                bookmarked = True
-            else:
-                bookmark = BookmarkedRecipes.objects.get(subscriber=request.user, recipe=recipe)
-                bookmark.delete()
-                bookmarked = False
-        elif 'star_rated' in request.POST or 'star_unrated' in request.POST:
-            if 'star_unrated' in request.POST:
-                rating += int(request.POST.get('star_unrated')) + 1
-            elif 'star_rated' in request.POST:
-                rating = int(request.POST.get('star_rated')) + 1
-            instance, created = Rating.objects.get_or_create(recipe_id=recipe_id, rater=request.user)
-            instance.stars = rating
-            instance.save()
-        elif 'post' in request.POST:
-            form = CommentForm(request.POST)
-            if form.is_valid():
-                form = form.save(commit=False)
-                form.recipe = recipe
-                form.commenter = request.user
-                form.save()
-                form = CommentForm()
+    rating = 0
+    if request.user.is_authenticated:
+        try:
+            rating = Rating.objects.get(recipe_id=recipe_id, rater=request.user)
+            rating = rating.stars
+        except Rating.DoesNotExist:
+            rating = 0  
+        if BookmarkedRecipes.objects.filter(subscriber=request.user, recipe=recipe).count() > 0:
+            bookmarked = True    
+        if request.method == 'POST':
+            if 'bookmark' in request.POST:
+                if not bookmarked:
+                    bookmark = BookmarkedRecipes()
+                    bookmark.subscriber=request.user
+                    bookmark.recipe=recipe
+                    bookmark.save()
+                    bookmarked = True
+                else:
+                    bookmark = BookmarkedRecipes.objects.get(subscriber=request.user, recipe=recipe)
+                    bookmark.delete()
+                    bookmarked = False
+            elif 'star_rated' in request.POST or 'star_unrated' in request.POST:
+                if 'star_unrated' in request.POST:
+                    rating += int(request.POST.get('star_unrated')) + 1
+                elif 'star_rated' in request.POST:
+                    rating = int(request.POST.get('star_rated')) + 1
+                instance, created = Rating.objects.get_or_create(recipe_id=recipe_id, rater=request.user)
+                instance.stars = rating
+                instance.save()
+            elif 'post' in request.POST:
+                form = CommentForm(request.POST)
+                if form.is_valid():
+                    form = form.save(commit=False)
+                    form.recipe = recipe
+                    form.commenter = request.user
+                    form.save()
+                    form = CommentForm()
     ratings = Rating.objects.filter(recipe_id=recipe_id)
     count_rating = ratings.count()
     avg_rating = ratings.aggregate(Avg("stars", default=0))['stars__avg']
@@ -199,7 +207,8 @@ def ViewRecipe(request, recipe_id):
         'rating':range(rating),
         'unrated':range(5-rating),
         'form':form,
-        'comments':comments
+        'comments':comments,
+        'is_chef':is_chef
         }
     return render(request, 'view_recipe.html', context)
 

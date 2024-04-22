@@ -21,6 +21,18 @@
 
 {% block main_body %}
 <div class="container h-100">
+    {% if user.is_authenticated %}
+        {% if is_chef %}
+            <div class="row">
+                <div class="col-md-12 text-right">
+                    <a class="btn btn-outline-secondary float-end" href="{% url 'update_recipe' recipe.id %}"><i class="fas fa-pencil-alt"></i> Edit</a>
+                </div>
+            </div>
+            <div>
+                <br>
+            </div>
+        {% endif %}
+    {% endif %}
     <div class="container-inner">
         <div class="row h-100 justify-content-center align-items-center border-bottom">
             <div class="col-md-4">
