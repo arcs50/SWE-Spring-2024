@@ -2,12 +2,10 @@ import math
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
-<<<<<<< HEAD
-from .forms import RecipeForm, IngredientForm, InstructionForm, IngredientFormSet, CommentForm
-from .models import Recipe, Ingredient, Instruction, BookmarkedRecipes, Rating, Comment
+from .forms import RecipeForm, IngredientForm, InstructionForm, IngredientFormSet, CommentForm, SocialMediaForm, ChefProfileForm
+from .models import Recipe, Ingredient, Instruction, BookmarkedRecipes, Rating, Comment, SocialMedia
 from django.utils import timezone
 from django.urls import reverse
->>>>>>> 5b71648e5dabe47f02b0c4bded184d7000ebb028
 from django.db import IntegrityError
 from django.forms.models import modelformset_factory, inlineformset_factory
 from django.contrib.auth.decorators import login_required
@@ -71,6 +69,35 @@ def discover(request):
     params['rec_chefs'] = rec_chefs
     
     return render(request, 'discover.html', params)
+
+def CreateUpdateChefProfile(request, chef_prof_id=None):
+    chef_prof = ChefProfile()
+    if chef_prof_id:
+        chef_prof = get_object_or_404(ChefProfile, id=chef_prof_id)
+    SocialMediaFormSet = inlineformset_factory(ChefProfile, SocialMedia, form=SocialMediaForm, extra=1, can_delete=True, can_delete_extra=True)
+    if request.method =='POST' and 'save_chef_prof' in request.POST:
+        form = ChefProfileForm(request.POST, request.FILES, instance=chef_prof)
+        socialmedia_formset = SocialMediaFormSet(request.POST, instance=chef_prof)
+        if form.is_valid() and socialmedia_formset.is_valid():
+            try:
+                with transaction.atomic():
+                    saved_chef_prof = form.save(commit=False)
+                    saved_chef_prof.chef_id = request.user.id
+                    saved_chef_prof.save()
+                    socialmedia_formset.save()
+                    #return redirect('',chef_prof_id = saved_chef_prof.id)
+            except Exception as e:  # To catch and log any error
+                form.add_error(None, f'An error occurred: {str(e)}')
+    else:
+        form = ChefProfileForm(instance=chef_prof)
+        socialmedia_formset = SocialMediaFormSet(instance=chef_prof) 
+         
+    context = {
+        'chef_prof_id': chef_prof_id,
+        'form': form,
+        'formset': socialmedia_formset,
+    }   
+    return render(request, 'create_update_chef_prof.html', context)
 
 @login_required
 def CreateUpdateRecipe(request, recipe_id=None):

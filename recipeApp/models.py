@@ -10,12 +10,13 @@ class ChefProfile(models.Model):
     title = models.CharField(max_length=255)
     description = models.TextField()
     display_email = models.BooleanField(default=False)
+    profile_picture = models.ImageField(upload_to='images/')
 
     def __str__(self):
         return self.title, self.description
 
 class SocialMedia(models.Model):
-    chef = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    chef_prof = models.ForeignKey(ChefProfile, on_delete=models.CASCADE)
     PLATFORMS = {
         ("TW","Twitter"),
         ("I","Instagram"),
@@ -42,7 +43,7 @@ class Recipe(models.Model):
     prep_time_minutes = models.PositiveIntegerField(validators = [MaxValueValidator(9999)])
     cook_time_minutes = models.PositiveIntegerField(validators = [MaxValueValidator(9999)])
     servings = models.PositiveIntegerField(validators = [MaxValueValidator(999)])
-    recipe_image = models.ImageField(upload_to='images/',blank=True,null=True)
+    recipe_image = models.ImageField(upload_to='images/')
 
     def __str__(self):
         return self.title

@@ -1,5 +1,5 @@
 from django.forms import ModelForm, TextInput, NumberInput, Select
-from .models import Recipe, Ingredient, Instruction, Rating, Comment
+from .models import Recipe, Ingredient, Instruction, Rating, Comment, ChefProfile, SocialMedia
 from django.forms.models import inlineformset_factory
 
 class RecipeForm(ModelForm):
@@ -55,3 +55,24 @@ class CommentForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["text"].widget.attrs.update({"class": "form-control", "rows":"3"})
+
+class ChefProfileForm(ModelForm):
+    class Meta:
+        model=ChefProfile
+        exclude = ['chef']
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["title"].widget.attrs.update({"class": "form-control"})
+        self.fields["description"].widget.attrs.update({"class": "form-control", "rows":"3"})
+        self.fields["display_email"].widget.attrs.update({"class":"form-check-input", "type":"checkbox", "role":"switch"})
+        self.fields["profile_picture"].widget.attrs.update({"class": "form-control"})
+
+class SocialMediaForm(ModelForm):
+    class Meta:
+        model = SocialMedia
+        exclude = ['chef']
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["platform"].widget.attrs.update({"class": "form-control"})
+        self.fields["handle"].widget.attrs.update({"class": "form-control"})
+        self.fields["url"].widget.attrs.update({"class": "form-control"})
