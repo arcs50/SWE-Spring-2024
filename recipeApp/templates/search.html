@@ -3,7 +3,7 @@
 {% load static %}
 
 {% block title %}
-    Main Site Discover Page
+    Search Page
 {% endblock title %}
 
 {% block style %}
@@ -49,7 +49,7 @@
     </div>
     <div class="container overflow-hidden">
         <div class="row border border-dark rounded-3 p-1 m-1 gap-1">
-            <p>recommend chefs: </p>
+            <p>chefs result: </p>
             {% for rec_chef in rec_chefs %}
             <div class="col-auto">
                 <div class="card">
@@ -67,7 +67,7 @@
     </div>
     <div class="container overflow-hidden">
         <div class="row border border-dark rounded-3 p-1 m-1 gap-1">
-            <p>recommend recipes: </p>
+            <p>recipes result: </p>
             {% for rec_recipe in rec_recipes %}
             <div class="col-auto">
                 <div class="card">
