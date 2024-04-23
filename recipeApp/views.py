@@ -2,8 +2,8 @@ import math
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
-from .forms import RecipeForm, IngredientForm, InstructionForm, IngredientFormSet, CommentForm, SocialMediaForm, ChefProfileForm
-from .models import Recipe, Ingredient, Instruction, BookmarkedRecipes, Rating, Comment, SocialMedia
+from .forms import RecipeForm, IngredientForm, InstructionForm, IngredientFormSet, CommentForm, SocialMediaForm, ChefProfileForm, CollectionForm
+from .models import Recipe, Ingredient, Instruction, BookmarkedRecipes, Rating, Comment, SocialMedia, Collection
 from django.utils import timezone
 from django.urls import reverse
 from django.db import IntegrityError
@@ -211,6 +211,33 @@ def ViewRecipe(request, recipe_id):
         'is_chef':is_chef
         }
     return render(request, 'view_recipe.html', context)
+
+def CreateUpdateCollection(request, chef_id, collection_id=None):
+    if request.user.is_authenticated and request.user.id == chef_id:
+        collection = Collection()
+        if collection_id:
+            collection = get_object_or_404(Collection, id=collection_id)
+        form = CollectionForm(instance=collection)
+        form.fields["recipes"].queryset = Recipe.objects.filter(chef=request.user)
+        if request.method == 'POST':
+            form = CollectionForm(request.POST, instance=collection)
+            if form.is_valid():
+                collection = form.save(commit=False)
+                collection.chef = request.user
+                collection.save()
+                form.save_m2m()
+                return redirect('view_collection', chef_id=chef_id, collection_id=collection.id)  # Redirect to a success page or the collection detail view
+        return render(request, 'create_update_collection.html', {'form': form, 'chef_id': chef_id, 'collection_id':collection_id})
+
+def ViewCollection(request, chef_id, collection_id):
+    collection = get_object_or_404(Collection, id=collection_id)
+    context = {
+        'collection':collection,
+        'chef_id':chef_id,
+        'collection_id':collection_id,
+        'user':request.user
+    }
+    return render(request, 'view_collection.html', context)
 
 def subscriber_home(request):
     if not request.user.is_authenticated:

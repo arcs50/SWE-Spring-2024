@@ -1,8 +1,10 @@
+import math
 from django.db import models
 from django.conf import settings
 from django.utils import timezone
 from django.core.validators import MaxValueValidator, MinValueValidator
 from userAccount.models import Person
+from django.db.models import Avg
 
 # Create your models here.
 class ChefProfile(models.Model):
@@ -51,14 +53,65 @@ class Recipe(models.Model):
     class Meta:
         unique_together = ["chef","title"]
 
+    def is_chef(self, user):
+        return self.chef == user
+
+    def get_time(self, time):
+        hour = int(time / 60)
+        min = int(time % 60)
+        res = ""
+        if hour > 0:
+            res += str(hour) + " hr "
+        if min > 0:
+            res += str(min) + " min"
+        return res
+
+    def get_total_time(self):
+        time = self.prep_time_minutes + self.cook_time_minutes
+        return self.get_time(int(time))
+    
+    def get_prep_time(self):
+        return self.get_time(self.prep_time_minutes)
+    
+    def get_cook_time(self):
+        return self.get_time(self.cook_time_minutes)
+    
+    def get_avg_rating(self):
+        ratings = Rating.objects.filter(recipe_id=self.id)
+        avg_rating = ratings.aggregate(Avg("stars", default=0))['stars__avg']
+        avg_rating_full = int(avg_rating)
+        avg_rating_partial = math.ceil(avg_rating % 1)
+        avg_rating_empty = 5 - avg_rating_full - avg_rating_partial
+        data = {
+            'avg_rating':avg_rating,
+            'avg_rating_full':range(avg_rating_full),
+            'avg_rating_partial':range(avg_rating_partial),
+            'avg_rating_empty':range(avg_rating_empty)
+        }
+        return data
+    
+    def get_count_rating(self):
+        ratings = Rating.objects.filter(recipe_id=self.id)
+        count_rating = ratings.count()
+        res = str(count_rating)
+        if count_rating > 1 or count_rating < 1:
+            res += " people" 
+        else:
+            res += " person"
+        return res
+        
+
 
 class Collection(models.Model):
+    chef = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     title = models.CharField(max_length = 250)
     creation_time = models.DateField(default=timezone.now)
     recipes = models.ManyToManyField(Recipe)
 
     def __str__(self):
         return self.title
+    
+
 
 class Ingredient(models.Model):
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
