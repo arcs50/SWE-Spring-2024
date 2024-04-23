@@ -239,6 +239,17 @@ def ViewCollection(request, chef_id, collection_id):
     }
     return render(request, 'view_collection.html', context)
 
+def ViewBookmarks(request, subscriber_id):
+    if request.user.is_authenticated and request.user.id == subscriber_id:
+        bookmarks = BookmarkedRecipes.objects.filter(subscriber=request.user)
+        context = {
+            'subscriber_id':subscriber_id,
+            'bookmarks':bookmarks
+        }
+        return render(request, 'view_bookmarks.html', context)
+    else:
+        return redirect('discover')
+
 def subscriber_home(request):
     if not request.user.is_authenticated:
         return redirect(reverse("signup"))
