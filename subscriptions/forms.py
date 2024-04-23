@@ -5,9 +5,10 @@ class ChefSubscriptionForm(ModelForm):
     class Meta:
         model = ChefSubscription
         exclude = ["chef"]
-        widgets = {
-            'title': TextInput(attrs={'placeholder': 'Subscription title'}),
-            'time_quantity': NumberInput(attrs ={'placeholder': 'Time qt.', 'style': 'width:75px'}),
-            'time_unit': Select(attrs={'placeholder': 'Time unit','style': 'width:75px'}),
-            'price': NumberInput(attrs={'placeholder': 'Price: $','style': 'width:75px'}),
-        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["time_quantity"].widget.attrs.update({"class": "form-control"})
+        self.fields["time_unit"].widget.attrs.update({"class": "form-control"})
+        self.fields["price"].widget.attrs.update({"class": "form-control"})
+        self.fields["title"].widget.attrs.update({"class": "form-control"})
