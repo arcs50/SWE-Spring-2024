@@ -1,0 +1,66 @@
+{% extends "recipeApp/base.html" %}
+
+{% block title %}My Profile{% endblock %} 
+
+{% block main_body %}
+<div class="container mt-4">
+    <h1 class="text-center">User Profile</h1>
+    <div class="card mx-auto" style="width: 60%;">
+        <div class="card-body">
+            <h5 class="card-title text-center">Profile Details</h5>
+            <form>
+                <div class="row">
+                    <!-- First Name -->
+                    <div class="col-md-6 mb-3">
+                        <label for="firstName" class="form-label"><strong>First Name:</strong></label>
+                        <input type="text" class="form-control" id="firstName" value="{{ user.first_name }}" readonly>
+                    </div>
+                    <!-- Last Name -->
+                    <div class="col-md-6 mb-3">
+                        <label for="lastName" class="form-label"><strong>Last Name:</strong></label>
+                        <input type="text" class="form-control" id="lastName" value="{{ user.last_name }}" readonly>
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <!-- Email -->
+                    <label for="email" class="form-label"><strong>Email:</strong></label>
+                    <input type="email" class="form-control" id="email" value="{{ user.email }}" readonly>
+                </div>
+                <div class="mb-3">
+                    <!-- Roles -->
+                    <label for="roles" class="form-label"><strong>You are currently logged in as:</strong></label>
+                    <ul class="list-unstyled">
+                        {% for role in user.role.all %}
+                        <li>{{ role.get_role_display }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="mb-3">
+                    <!-- Joined Date -->
+                    <label for="joined" class="form-label"><strong>Joined Since:</strong></label>
+                    <input type="text" class="form-control" id="joined" value="{{ user.date_joined|date:'Y-m-d' }}" readonly>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- <div class="container mt-4">
+    <h1 class="text-center">User Profile</h1>
+    <div class="card" style="width: 60%;">
+        <div class="card-body text-center">
+            <h5 class="card-title">Profile Details</h5>
+            <p class="card-text"><strong>Email:</strong> {{ user.email }}</p>
+            <p class="card-text"><strong>First Name:</strong> {{ user.first_name }}</p>
+            <p class="card-text"><strong>Last Name:</strong> {{ user.last_name }}</p>
+            <p class="card-text"><strong>You are currently login as:</strong>
+                <ul class="list-unstyled">
+                {% for role in user.role.all %}
+                    <li>{{ role.get_role_display }}</li>
+                {% endfor %}
+                </ul>
+            </p>
+            <p class="card-text"><strong>Joined Since:</strong> {{ user.date_joined|date:"Y-m-d" }}</p>
+        </div>
+    </div>
+</div> -->
+{% endblock %}
