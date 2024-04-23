@@ -36,4 +36,11 @@ def to_chef_role(request):
 @login_required
 def user_profile_view(request):
     user = request.user
-    return render(request, 'profile/user_profile.html', {'user': user})
+    is_chef = user.role.filter(id=user.id, role='C').exists()
+    is_subscriber = user.role.filter(id=user.id, role='S').exists()
+    is_admin = user.role.filter(id=user.id, role='A').exists()
+    return render(request, 'profile/user_profile.html',
+                  {'user': user, 'is_chef': is_chef,
+                      'is_subscriber': is_subscriber,
+                      'is_admin': is_admin}
+                  )

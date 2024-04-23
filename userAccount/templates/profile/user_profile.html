@@ -4,10 +4,19 @@
 
 {% block main_body %}
 <div class="container mt-4">
-    <h1 class="text-center">User Profile</h1>
-    <div class="card mx-auto" style="width: 60%;">
+    <h1 class="text-center">Profile Details</h1>
+    <br/>
+    <div class="card mx-auto p-md-3" style="width: 75%;">
+        <div class="d-flex align-content-end justify-content-end">
+            {% if not is_chef and not is_admin %}
+                <a href="" class="btn btn-primary align-content-end me-2">Become Chef</a>
+            {% endif %}
+            {% if not is_subscriber and not is_admin %}
+                <a href="" class="btn btn-primary align-content-end me-2">Become Subscriber</a>
+            {% endif %}
+            <a href="" class="btn btn-info align-content-end">Edit Profile</a>
+        </div>
         <div class="card-body">
-            <h5 class="card-title text-center">Profile Details</h5>
             <form>
                 <div class="row">
                     <!-- First Name -->
@@ -21,18 +30,35 @@
                         <input type="text" class="form-control" id="lastName" value="{{ user.last_name }}" readonly>
                     </div>
                 </div>
-                <div class="mb-3">
-                    <!-- Email -->
-                    <label for="email" class="form-label"><strong>Email:</strong></label>
-                    <input type="email" class="form-control" id="email" value="{{ user.email }}" readonly>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <!-- Email -->
+                        <label for="email" class="form-label"><strong>Email:</strong></label>
+                        <input type="email" class="form-control" id="email" value="{{ user.email }}" readonly>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <!-- Passwords Change -->
+                        <!-- Label -->
+                        <label for="password" class="form-label"><strong>Password:</strong></label>
+                        <div class="d-flex align-items-center mb-2">
+                            <input type="password" class="form-control w-50 me-3" id="password" value="********" readonly>
+                            <!-- Change Password Button -->
+                            <a href="" class="btn btn-warning w-50 me-0">Change Password</a>
+                        </div>
+                    </div>
+
                 </div>
                 <div class="mb-3">
                     <!-- Roles -->
                     <label for="roles" class="form-label"><strong>You are currently logged in as:</strong></label>
                     <ul class="list-unstyled">
-                        {% for role in user.role.all %}
-                        <li>{{ role.get_role_display }}</li>
-                        {% endfor %}
+                        {% if user.is_superuser %}
+                            {% for role in user.role.all %}
+                                <li>{{ role.get_role_display }}</li>
+                            {% endfor %}
+                        {% else %}
+                            <li>Non-Subscriber</li>
+                        {% endif %}
                     </ul>
                 </div>
                 <div class="mb-3">
@@ -44,23 +70,4 @@
         </div>
     </div>
 </div>
-<!-- <div class="container mt-4">
-    <h1 class="text-center">User Profile</h1>
-    <div class="card" style="width: 60%;">
-        <div class="card-body text-center">
-            <h5 class="card-title">Profile Details</h5>
-            <p class="card-text"><strong>Email:</strong> {{ user.email }}</p>
-            <p class="card-text"><strong>First Name:</strong> {{ user.first_name }}</p>
-            <p class="card-text"><strong>Last Name:</strong> {{ user.last_name }}</p>
-            <p class="card-text"><strong>You are currently login as:</strong>
-                <ul class="list-unstyled">
-                {% for role in user.role.all %}
-                    <li>{{ role.get_role_display }}</li>
-                {% endfor %}
-                </ul>
-            </p>
-            <p class="card-text"><strong>Joined Since:</strong> {{ user.date_joined|date:"Y-m-d" }}</p>
-        </div>
-    </div>
-</div> -->
 {% endblock %}
