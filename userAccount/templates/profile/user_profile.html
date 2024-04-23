@@ -14,7 +14,7 @@
             {% if not is_subscriber and not is_admin %}
                 <a href="" class="btn btn-primary align-content-end me-2">Become Subscriber</a>
             {% endif %}
-            <a href="" class="btn btn-info align-content-end">Edit Profile</a>
+            <a href="{% url 'edit_user_profile' %}" class="btn btn-info align-content-end">Edit Profile</a>
         </div>
         <div class="card-body">
             <form>
@@ -43,7 +43,7 @@
                         <div class="d-flex align-items-center mb-2">
                             <input type="password" class="form-control w-50 me-3" id="password" value="********" readonly>
                             <!-- Change Password Button -->
-                            <a href="" class="btn btn-warning w-50 me-0">Change Password</a>
+                            <a href="{% url 'change_password' %}" class="btn btn-warning w-50 me-0">Change Password</a>
                         </div>
                     </div>
 

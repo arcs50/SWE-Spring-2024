@@ -1,0 +1,50 @@
+{% extends "recipeApp/base.html" %}
+
+{% block title %}My Profile{% endblock %} 
+
+{% block main_body %}
+<div class="container mt-4">
+    <h1 class="text-center">Update Profile</h1>
+    <br/>
+    <div class="card mx-auto p-md-3" style="width: 75%;">
+        <div class="d-flex align-content-end justify-content-end">
+            <button type="submit" form="userForm" class="btn btn-info me-2">Save Change</button>
+            <a href="{% url 'view_user_profile' %}" class="btn btn-danger align-content-end">Cancel</a>
+        </div>
+        <div class="card-body">
+            <form id="userForm" action="{% url 'edit_user_profile' %}" method="post">
+                {% csrf_token %}
+                <div class="row">
+                    <!-- First Name -->
+                    <div class="col-md-6 mb-3">
+                        <label for="firstName" class="form-label"><strong>First Name:</strong></label>
+                        <input type="text" class="form-control" id="firstName" name="first_name" value="{{ user.first_name }}">
+                    </div>
+                    <!-- Last Name -->
+                    <div class="col-md-6 mb-3">
+                        <label for="lastName" class="form-label"><strong>Last Name:</strong></label>
+                        <input type="text" class="form-control" id="lastName" name="last_name" value="{{ user.last_name }}">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <!-- Email -->
+                        <label for="email" class="form-label"><strong>Email:</strong></label>
+                        <input type="email" class="form-control" id="email" name="email" value="{{ user.email }}">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <!-- Passwords Change -->
+                        <!-- Label -->
+                        <label for="password" class="form-label"><strong>Password:</strong></label>
+                        <div class="d-flex align-items-center mb-2">
+                            <input type="password" class="form-control w-50 me-3" id="password" value="********" readonly>
+                            <!-- Change Password Button -->
+                            <a href="{% url 'change_password' %}" class="btn btn-warning w-50 me-0">Change Password</a>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
