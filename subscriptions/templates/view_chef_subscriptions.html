@@ -17,7 +17,12 @@
             <div class="card-body">
               <h5 class="card-title">{{ subscription.title }}</h5>
               <p class="card-text">{{ subscription.get_caption }}</p>
-              <a href="#" class="btn btn-primary">Subscribe</a>
+              <form action="{% url 'create-checkout-session' %}" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="subscriptionId" value="{{ subscription.id }}">
+                <input type="hidden" name="stripePriceId" value="{{ subscription.stripe_price_id }}">
+                <button type="submit" id="checkout-button">Subscribe</button>
+            </form>
             </div>
           </div>
         </div>

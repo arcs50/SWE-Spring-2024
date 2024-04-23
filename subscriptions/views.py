@@ -9,6 +9,7 @@ from .models import ChefSubscription
 from recipeApp.models import ChefProfile
 import stripe
 import os
+from django.urls import reverse
 from flask import redirect
 from django.conf import settings
 from django.http import HttpResponseRedirect
@@ -16,7 +17,7 @@ from django.views import View
 from django.views.generic import TemplateView
 
 from django.shortcuts import get_object_or_404, render
-from .models import ChefSubscription, SiteSubscription
+from .models import ChefSubscription, SiteSubscription, SubscriptionToChef
 from django.contrib.auth import get_user_model
 
 stripe.api_key= settings.STRIPE_SECRET_KEY
@@ -29,6 +30,7 @@ def site_subscription(request):
 
 def ManageSubscriptionView(request):
     context = {}
+    form = ChefSubscriptionForm()
     if request.method == 'POST':
         form = ChefSubscriptionForm(request.POST)
         if 'submit' in request.POST:
@@ -46,33 +48,17 @@ def ManageSubscriptionView(request):
                     price = stripe.Price.create(
                         unit_amount=int(subscription.price * 100),  # Price in cents
                         currency="usd",
-                        recurring={"interval": subscription.get_interval_display().lower()},  # Convert to stripe format
+                        recurring= {"aggregate_usage": None, "interval": subscription.get_time_unit(), "interval_count": subscription.time_quantity, "trial_period_days": None, "usage_type": "licensed"},
                         product=product.id,
                     )
                     subscription.stripe_price_id = price.id  # Save the Stripe price ID to your model
                     subscription.save()
+                    form=ChefSubscriptionForm()
                 except stripe.error.StripeError as e:
                     # Handle Stripe exceptions
                     context['error'] = str(e)
-                    return render(request, 'manage_subscriptions.html', context)
-
-                return redirect('create_chef_subscription')
-            else:
-                context['form'] = ChefSubscriptionForm()
-        elif 'delete' in request.POST:
-            pk = request.POST.get('delete')
-            chef_sub = ChefSubscription.objects.get(id=pk)
-            chef_sub.delete()
-        elif 'edit' in request.POST:
-            pk = request.POST.get('edit')
-            chef_sub = ChefSubscription.objects.get(id=pk)
-            form = ChefSubscriptionForm(instance=chef_sub)
-    
-    else:  # GET request
-        form = ChefSubscriptionForm()
     
     chef_subscriptions = ChefSubscription.objects.filter(chef=request.user)
-    print(chef_subscriptions)
     context.update({
         'form': form,
         'chef_subscriptions': chef_subscriptions,
@@ -99,4 +85,56 @@ def subscribeToChef(request, chef_id):
     }
     return render(request, 'view_chef_subscriptions.html', context)
 
+def create_checkout_session(request):
+    if request.method == 'POST':
+        try:
+            # Access the form data using Django's request.POST dictionary
+            print(request.POST.get('stripePriceId'))
+            stripe_price_id = request.POST.get('stripePriceId') # Assuming you need this for Stripe
+            success_url = request.build_absolute_uri(reverse('payment_success')) + '?session_id={CHECKOUT_SESSION_ID}'
+            checkout_session = stripe.checkout.Session.create(
+                line_items=[
+                    {
+                        'price': stripe_price_id,  # Use the correct Stripe Price ID from the form
+                        'quantity': 1,
+                    },
+                ],
+                mode='subscription',
+                success_url=success_url.replace('{CHECKOUT_SESSION_ID}', '{CHECKOUT_SESSION_ID}'), # Correctly format the URL
+                cancel_url=request.build_absolute_uri('/cancel.html'),
+                metadata={'user_id': request.user.id,'stripePriceId':stripe_price_id}
+            )
+            return HttpResponseRedirect(checkout_session.url)
+        except Exception as e:
+            return HttpResponse(str(e))  # Display errors
 
+    # If it's not a POST request, or if anything goes wrong, show the form again
+    chef_subscriptions = ChefSubscription.objects.filter(chef_id=request.user.id)
+    context = {
+        'chef_subscriptions': chef_subscriptions,
+    }
+    return render(request, 'view_chef_subscriptions.html')
+
+
+def payment_success(request):
+    session_id = request.GET.get('session_id')
+    if not session_id:
+        return HttpResponse("No session ID found.", status=400)
+
+    try:
+        session = stripe.checkout.Session.retrieve(session_id)
+
+        user_id = session.metadata['user_id']  # Assuming you stored user_id in metadata
+        stripe_price_id = session.metadata['stripePriceId']
+
+        # Find or create the ChefSubscription (assuming you have a way to relate a Stripe price ID to a ChefSubscription)
+        chef_subscription = ChefSubscription.objects.get(stripe_price_id=stripe_price_id)
+
+        # Record the subscription to the chef
+        subscription = SubscriptionToChef.objects.create(
+            subscriber_id=user_id,
+            chef_subscription=chef_subscription
+        )
+        return HttpResponse("Subscription successful!")
+    except Exception as e:
+        return HttpResponse(f"An error occurred: {str(e)}", status=500)

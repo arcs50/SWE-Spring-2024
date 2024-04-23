@@ -46,6 +46,14 @@ class ChefSubscription(models.Model):
             caption += "s"
         return caption
 
+    def get_time_unit(self):
+        if self.time_unit == 'W':
+            return "week"
+        elif self.time_unit == "M":
+            return "month"
+        else:
+            return "year"
+
 class SubscriptionToChef(models.Model):
     subscriber = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     chef_subscription = models.ForeignKey(ChefSubscription, on_delete=models.CASCADE)
