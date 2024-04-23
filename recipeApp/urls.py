@@ -19,5 +19,6 @@ urlpatterns = [
     path("view_recipe/<int:recipe_id>", ViewRecipe, name="view_recipe"),
     path("create_collection/<int:chef_id>", CreateUpdateCollection, name="create_collection"),
     path("update_collection/<int:chef_id>/<int:collection_id>", CreateUpdateCollection, name="update_collection"),
+    path("view_collection/<int:chef_id>/<int:collection_id>", ViewCollection, name="view_collection"),
     path("view_bookmarks/<int:subscriber_id>", ViewBookmarks, name="view_bookmarks"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
