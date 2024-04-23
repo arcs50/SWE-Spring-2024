@@ -1,6 +1,9 @@
+import math
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
+from .forms import RecipeForm, IngredientForm, InstructionForm, IngredientFormSet, CommentForm, SocialMediaForm, ChefProfileForm, CollectionForm
+from .models import Recipe, Ingredient, Instruction, BookmarkedRecipes, Rating, Comment, SocialMedia, Collection
 from django.utils import timezone
 from django.urls import reverse
 from django.db import IntegrityError
@@ -10,6 +13,7 @@ from django.db import transaction
 from django.conf import settings
 from django.views.generic.edit import CreateView, UpdateView
 from django.views.generic import ListView
+from django.db.models import Avg
 #import pdb
 
 import time
@@ -105,6 +109,37 @@ def search(request):
     return render(request, 'search.html', params)
 
 @login_required
+def CreateUpdateChefProfile(request, chef_prof_id=None):
+    chef_prof = ChefProfile()
+    if chef_prof_id:
+        chef_prof = get_object_or_404(ChefProfile, id=chef_prof_id)
+        #if chef_prof.chef != request.user:
+    SocialMediaFormSet = inlineformset_factory(ChefProfile, SocialMedia, form=SocialMediaForm, extra=1, can_delete=True, can_delete_extra=True)
+    if request.method =='POST' and 'save_chef_prof' in request.POST:
+        form = ChefProfileForm(request.POST, request.FILES, instance=chef_prof)
+        socialmedia_formset = SocialMediaFormSet(request.POST, instance=chef_prof)
+        if form.is_valid() and socialmedia_formset.is_valid():
+            try:
+                with transaction.atomic():
+                    saved_chef_prof = form.save(commit=False)
+                    saved_chef_prof.chef_id = request.user.id
+                    saved_chef_prof.save()
+                    socialmedia_formset.save()
+                    #return redirect('',chef_prof_id = saved_chef_prof.id)
+            except Exception as e:  # To catch and log any error
+                form.add_error(None, f'An error occurred: {str(e)}')
+    else:
+        form = ChefProfileForm(instance=chef_prof)
+        socialmedia_formset = SocialMediaFormSet(instance=chef_prof) 
+         
+    context = {
+        'chef_prof_id': chef_prof_id,
+        'form': form,
+        'formset': socialmedia_formset,
+    }   
+    return render(request, 'create_update_chef_prof.html', context)
+
+@login_required
 def CreateUpdateRecipe(request, recipe_id=None):
     recipes = Recipe.objects.filter(chef_id=request.user.id)
     recipe = Recipe()
@@ -145,50 +180,118 @@ def CreateUpdateRecipe(request, recipe_id=None):
 
 def ViewRecipe(request, recipe_id):
     recipe = get_object_or_404(Recipe, id=recipe_id)
-    ingredients = Ingredient.objects.filter(id=recipe_id)
+    is_chef = False
+    if request.user.is_authenticated:
+        if recipe.chef == request.user:
+            is_chef = True
+    ingredients = Ingredient.objects.filter(recipe_id=recipe_id)
+    instructions = Instruction.objects.filter(recipe_id=recipe_id)
+    form = CommentForm()
+    bookmarked = False
+    rating = 0
+    if request.user.is_authenticated:
+        try:
+            rating = Rating.objects.get(recipe_id=recipe_id, rater=request.user)
+            rating = rating.stars
+        except Rating.DoesNotExist:
+            rating = 0  
+        if BookmarkedRecipes.objects.filter(subscriber=request.user, recipe=recipe).count() > 0:
+            bookmarked = True    
+        if request.method == 'POST':
+            if 'bookmark' in request.POST:
+                if not bookmarked:
+                    bookmark = BookmarkedRecipes()
+                    bookmark.subscriber=request.user
+                    bookmark.recipe=recipe
+                    bookmark.save()
+                    bookmarked = True
+                else:
+                    bookmark = BookmarkedRecipes.objects.get(subscriber=request.user, recipe=recipe)
+                    bookmark.delete()
+                    bookmarked = False
+            elif 'star_rated' in request.POST or 'star_unrated' in request.POST:
+                if 'star_unrated' in request.POST:
+                    rating += int(request.POST.get('star_unrated')) + 1
+                elif 'star_rated' in request.POST:
+                    rating = int(request.POST.get('star_rated')) + 1
+                instance, created = Rating.objects.get_or_create(recipe_id=recipe_id, rater=request.user)
+                instance.stars = rating
+                instance.save()
+            elif 'post' in request.POST:
+                form = CommentForm(request.POST)
+                if form.is_valid():
+                    form = form.save(commit=False)
+                    form.recipe = recipe
+                    form.commenter = request.user
+                    form.save()
+                    form = CommentForm()
+    ratings = Rating.objects.filter(recipe_id=recipe_id)
+    count_rating = ratings.count()
+    avg_rating = ratings.aggregate(Avg("stars", default=0))['stars__avg']
+    avg_rating_full = int(avg_rating)
+    avg_rating_partial = math.ceil(avg_rating % 1)
+    avg_rating_empty = 5 - avg_rating_full - avg_rating_partial
+    comments = Comment.objects.filter(recipe_id=recipe_id)
     context= {
         'recipe':recipe,
-        'ingredients':ingredients
+        'ingredients':ingredients,
+        'instructions':instructions,
+        'bookmarked':bookmarked,
+        'count_rating': count_rating,
+        'avg_rating':avg_rating, 
+        'avg_rating_full': range(avg_rating_full),
+        'avg_rating_partial':range(avg_rating_partial),
+        'avg_rating_empty':range(avg_rating_empty),
+        'rating':range(rating),
+        'unrated':range(5-rating),
+        'form':form,
+        'comments':comments,
+        'is_chef':is_chef
         }
     return render(request, 'view_recipe.html', context)
 
+def CreateUpdateCollection(request, chef_id, collection_id=None):
+    if request.user.is_authenticated and request.user.id == chef_id:
+        collection = Collection()
+        if collection_id:
+            collection = get_object_or_404(Collection, id=collection_id)
+        form = CollectionForm(instance=collection)
+        form.fields["recipes"].queryset = Recipe.objects.filter(chef=request.user)
+        if request.method == 'POST':
+            form = CollectionForm(request.POST, instance=collection)
+            if form.is_valid():
+                collection = form.save(commit=False)
+                collection.chef = request.user
+                collection.save()
+                form.save_m2m()
+                return redirect('view_collection', chef_id=chef_id, collection_id=collection.id)  # Redirect to a success page or the collection detail view
+        return render(request, 'create_update_collection.html', {'form': form, 'chef_id': chef_id, 'collection_id':collection_id})
 
+def ViewCollection(request, chef_id, collection_id):
+    is_chef = False
+    if request.user.is_authenticated:
+        if chef_id == request.user.id:
+            is_chef = True
+    collection = get_object_or_404(Collection, id=collection_id)
+    context = {
+        'collection':collection,
+        'chef_id':chef_id,
+        'collection_id':collection_id,
+        'user':request.user,
+        'is_chef':is_chef
+    }
+    return render(request, 'view_collection.html', context)
 
-# #@login_required
-# def CreateRecipe(request, recipe_id='None'):
-#     recipes = Recipe.objects.filter(recipe_id=request.user.id)
-#     ingredientFormSet = modelformset_factory(Ingredient, form=ingredientForm, extra = 2, can_delete=True, can_order=True, max_num=60) 
-#     if request.method == 'POST' and 'save_recipe' in request.POST:
-#             form = recipeForm(request.POST)
-#             ingredient_formset = ingredientFormSet(request.POST)
-#             if form.is_valid() and ingredient_formset.is_valid():  
-#                 try:
-#                     with transaction.atomic():
-#                         recipe = form.save(commit=False)
-#                         recipe.chef_id = request.user.id
-#                         recipe.save()
-#                         #ingredients = ingredient_formset.save(commit=False)
-#                         for ingredient in ingredient_formset:
-#                             ingredient.save(commit=False)
-#                             ingredient.recipe = recipe
-#                             ingredient.save()
-#                         #ingredient_formset.save()
-#                     # form = recipeForm
-#                     # ingredient_formset = ingredientFormSet  
-#                 except Exception as e:  # To catch and log any error
-#                     form.add_error(None, f'An error occurred: {str(e)}')
-#             else:
-#                  print(ingredient_formset.errors) 
-#     else:
-#          form = recipeForm()
-#          ingredient_formset = ingredientFormSet(queryset=Ingredient.objects.none()) 
-#     context = {
-#         'chef_id': chef_id,
-#         'recipes': recipes,
-#         'form': form,
-#         'formset': ingredient_formset
-#     }   
-#     return render(request, 'create_recipe.html', context)
+def ViewBookmarks(request, subscriber_id):
+    if request.user.is_authenticated and request.user.id == subscriber_id:
+        bookmarks = BookmarkedRecipes.objects.filter(subscriber=request.user)
+        context = {
+            'subscriber_id':subscriber_id,
+            'bookmarks':bookmarks
+        }
+        return render(request, 'view_bookmarks.html', context)
+    else:
+        return redirect('discover')
 
 def subscriber_home(request):
     if not request.user.is_authenticated:

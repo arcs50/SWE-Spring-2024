@@ -1,0 +1,52 @@
+{% extends "template.html" %}
+{% load static %}
+
+
+{% block title %}
+   Create or Update Chef Profile
+{% endblock title %}
+
+{% block style %}
+        .container-md {
+            background-color: #e8f1ff; /* Example: light gray background */
+            padding: 30px;
+            border-radius: 10px;
+        }
+{% endblock style %}
+
+{% block main_body %}
+<div class="container-md">
+    <div class="text-center">
+        {% if collection_id %}
+            <h1> Edit Collection</h1>
+        {% else %}
+            <h1> Create Collection</h1>
+        {% endif %}
+    </div>
+<form method="post" action="{% if collection_id %}{% url 'update_collection' chef_id=chef_id collection_id=collection_id %}{% else %}{% url 'create_collection' chef_id=chef_id %}{% endif %}">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+        <!--Collection title-->
+        <div class="mb-3">
+            {{ form.title.errors }}
+            <label class="form-label" for="{{ form.title.id_for_label }}">Collection Title</label>
+            {{form.title}}
+        </div>
+        <div class="mb-3">
+            {{ form.recipes.errors }}
+            <label class="form-label" for="{{ form.recipes.id_for_label }}">Recipes</label>
+            {{form.recipes}}
+            <span class="help-block text-secondary">ctrl click to add multiple recipes</span>
+        </div>
+        <div class="row">
+            <div class="col-md-12 text-right">
+                <button type="submit" class="btn btn-primary float-end" name="save_collection">Save Collection</button>
+            </div>
+        </div>
+</form>      
+</div>
+{% endblock main_body %}
+
+
+
+    

@@ -1,0 +1,48 @@
+{% extends "template.html" %}
+{% load static %}
+
+
+{% block title %}
+   Create or Update Chef Profile
+{% endblock title %}
+
+{% block style %}
+        .container-md {
+            background-color: #e8f1ff; /* Example: light gray background */
+            padding: 30px;
+            border-radius: 10px;
+        }
+
+{% endblock style %}
+
+{% block main_body %}
+<div class="container-md">
+    {% if is_chef %}
+        <div class="row">
+            <div class="col-md-12 text-right">
+                <a class="btn btn-outline-secondary float-end" href="{% url 'update_collection' chef_id=chef_id collection_id=collection_id %}"><i class="fas fa-pencil-alt"></i> Edit</a>
+            </div>
+        </div>
+        <div>
+            <br>
+        </div>
+    {% endif %}
+    <div class="text-center">
+        <h1>{{collection.title}}</h1>
+    </div>
+    <div>
+        <br>
+    </div>
+    <div class="row">
+        {% for recipe in collection.recipes.all %}
+        <div class="col-lg-4 d-flex align-items-stretch">
+        {% include 'recipe_template.html' %}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock main_body %}
+
+
+
+    

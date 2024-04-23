@@ -17,7 +17,11 @@
 {% block main_body %}
     
     <div class="shadow-sm p-3 mb-5 container-md">
-        <h1 style="text-align: center;">Create a Recipe</h1>
+        {% if recipe_id %}
+            <h1 style="text-align: center;">Edit Recipe</h1>
+        {% else %}
+            <h1 style="text-align: center;">Create a Recipe</h1>
+        {% endif %}
         <form method="post" enctype="multipart/form-data" action="{% if recipe_id %}{% url 'update_recipe' recipe_id=recipe_id %}{% else %}{% url 'create_recipe' %}{% endif %}">
             {% csrf_token %}
             <!-- Management data of formset -->
