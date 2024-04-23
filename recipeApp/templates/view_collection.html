@@ -17,6 +17,16 @@
 
 {% block main_body %}
 <div class="container-md">
+    {% if is_chef %}
+        <div class="row">
+            <div class="col-md-12 text-right">
+                <a class="btn btn-outline-secondary float-end" href="{% url 'update_collection' chef_id=chef_id collection_id=collection_id %}"><i class="fas fa-pencil-alt"></i> Edit</a>
+            </div>
+        </div>
+        <div>
+            <br>
+        </div>
+    {% endif %}
     <div class="text-center">
         <h1>{{collection.title}}</h1>
     </div>

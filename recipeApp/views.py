@@ -230,12 +230,17 @@ def CreateUpdateCollection(request, chef_id, collection_id=None):
         return render(request, 'create_update_collection.html', {'form': form, 'chef_id': chef_id, 'collection_id':collection_id})
 
 def ViewCollection(request, chef_id, collection_id):
+    is_chef = False
+    if request.user.is_authenticated:
+        if chef_id == request.user.id:
+            is_chef = True
     collection = get_object_or_404(Collection, id=collection_id)
     context = {
         'collection':collection,
         'chef_id':chef_id,
         'collection_id':collection_id,
-        'user':request.user
+        'user':request.user,
+        'is_chef':is_chef
     }
     return render(request, 'view_collection.html', context)
 
