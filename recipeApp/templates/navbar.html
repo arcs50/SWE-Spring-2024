@@ -58,16 +58,16 @@
           <button class="btn btn-outline-success" type="submit">Search</button>
         </form>
 
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-        {% if user.is_authenticated %}
+        <ul class="navbar-nav me-1 mb-2 mb-lg-0">
+          {% if user.is_authenticated %}
           <li class="nav-item dropdown  d-flex me-2">
           <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
             Profile
           </a>
             <ul class="dropdown-menu">
-              <li><a class="dropdown-item" href="#">My Profile</a></li>
+              <li><a class="dropdown-item" href="{% url 'view_user_profile' %}">My Profile</a></li>
               <li><a class="dropdown-item" href="#">My Recipes</a></li>
-              <li><a class="dropdown-item" href="#">My Subscriptions</a></li>
+              <li><a class="dropdown-item" href="{% url 'site_subscription' %}">My Subscriptions</a></li>
               <li><a class="dropdown-item" href="#">My Followers</a></li>
               <li><hr class="dropdown-divider"></li>
               <li><a class="dropdown-item" href="#">Settings</a></li>
@@ -80,7 +80,6 @@
           </li>
           {% else %}
           <li class="nav-item">
-
             <a class="btn btn-primary me-2" href="{% url 'login' %}">Login</a>
             <a class="btn btn-secondary" href="{% url 'signup' %}">Signup</a>
           </li>
