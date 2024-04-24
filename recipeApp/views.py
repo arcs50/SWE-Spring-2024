@@ -40,10 +40,8 @@ def discover(request):
         chef_person = Person.objects.get(id=recipe.chef_id)
         rec_recipe = {
             'recipe_id': recipe.id,
-            'title': recipe.title,
-            'posted_time': recipe.posted_time,
             'chef_name': chef_person.first_name + ' ' + chef_person.last_name,
-            'first_img_dir': 'images/sad_cat.jpg'
+            'recipe': recipe
         }
         rec_recipes.append(rec_recipe)
     
@@ -77,21 +75,20 @@ def search(request):
         params['avatar_dir'] = 'images/sad_cat.jpg'
         
     # get recipes
-    recipes = Recipe.objects.filter(title__contains=searchtext)
+    recipes = Recipe.objects.filter(title__icontains=searchtext)
     rec_recipes = []
+        
     for recipe in recipes:
         chef_person = Person.objects.get(id=recipe.chef_id)
         rec_recipe = {
             'recipe_id': recipe.id,
-            'title': recipe.title,
-            'posted_time': recipe.posted_time,
             'chef_name': chef_person.first_name + ' ' + chef_person.last_name,
-            'first_img_dir': 'images/sad_cat.jpg'
+            'recipe': recipe
         }
         rec_recipes.append(rec_recipe)
     
     # get chefs
-    chefs = ChefProfile.objects.filter(title__contains=searchtext)
+    chefs = ChefProfile.objects.filter(title__icontains=searchtext)
     rec_chefs = []
     for chef in chefs:
         chef_person = Person.objects.get(id=chef.chef_id)
