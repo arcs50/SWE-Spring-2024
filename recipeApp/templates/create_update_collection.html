@@ -1,4 +1,4 @@
-{% extends "template.html" %}
+{% extends "recipeApp/base.html"  %}
 {% load static %}
 
 
@@ -47,76 +47,3 @@
 </div>
 {% endblock main_body %}
 
-
-
-    
-
-{% extends "template.html" %}
-{% load static %}
-
-
-{% block title %}
-   Create or Update Chef Subscription
-{% endblock title %}
-
-{% block style %}
-        .container-md {
-            background-color: #e8f1ff; /* Example: light gray background */
-            padding: 30px;
-            border-radius: 10px;
-        }
-{% endblock style %}
-
-{% block main_body %}
-<div class="container-md">
-    <div class="text-center">
-        {% if chef_subscription_id %}
-            <h1> Edit Chef Subscription</h1>
-        {% else %}
-            <h1> Create Chef Subscription</h1>
-        {% endif %}
-    </div>
-<form method="post" action="{% if chef_subscription_id %}{% url 'update_chef_subscription' chef_id=chef_id chef_subscription_id=chef_subscription_id %}{% else %}{% url 'create_chef_subscription' chef_id=chef_id %}{% endif %}">
-    {% csrf_token %}
-    {{ form.non_field_errors }}
-        <!--Collection title-->
-        <div class="mb-3">
-            {{ form.title.errors }}
-            <label class="form-label" for="{{ form.title.id_for_label }}">Subscription title</label>
-            {{form.title}}
-        </div>
-        <div class="row">
-            <div class="col">
-                <div class="mb-3">
-                    {{ form.time_quantity.errors }}
-                    <label class="form-label" for="{{ form.time_quantity.id_for_label }}">Amount of time</label>
-                    {{form.time_quantity}}
-                </div>
-            </div>
-            <div class="col">
-                <div class="mb-3">
-                    {{ form.time_unit.errors }}
-                    <label class="form-label" for="{{ form.time_unit.id_for_label }}">Unit of time</label>
-                    {{form.time_unit}}
-                </div>
-            </div>
-            <div class="col">
-                <div class="mb-3">
-                    {{ form.price.errors }}
-                    <label class="form-label" for="{{ form.price.id_for_label }}">Price</label>
-                    {{form.price}}
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-12 text-right">
-                    <button type="submit" class="btn btn-primary float-end" name="save_chef_subscriptiton">Save Subscription</button>
-                </div>
-            </div>
-    </div>
-</form>      
-</div>
-{% endblock main_body %}
-
-
-
-    

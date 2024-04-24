@@ -3,6 +3,8 @@
             <div class="card-body {% if not recipe.free_to_nonsubscriber %} text-secondary {% endif %}">
                 <img class="card-img-top" src="{{ recipe.recipe_image.url }}" alt="Image of {{ recipe.title }}">
                 <h5 class="card-title">{{ recipe.title }}</h5>
+                <p class="card-text">{{chef_name}}</p>
+                <p class="card-text">{{recipe.posted_time}}</p>
                 <div class="row">
                     <div class="col">
                         {% for _ in recipe.get_avg_rating.avg_rating_full %}
