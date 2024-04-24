@@ -109,10 +109,6 @@ def ViewChefSubscriptions(request, chef_id):
                chef_sub.active=False
                chef_sub.save()
            else:    
-                price_on_stripe= stripe.Price.retrieve(chef_sub.stripe_price_id)
-                stripe.Price.modify(chef_sub.stripe_price_id,active=False)
-                product_id=price_on_stripe.product
-                stripe.Product.delete(product_id)
                 chef_sub.delete()
     context = {
         'chef_subscriptions': chef_subscriptions,
