@@ -15,14 +15,27 @@
         <div class="col-md-4">
           <div class="card">
             <div class="card-body">
-              <h5 class="card-title">{{ subscription.title }}</h5>
-              <p class="card-text">{{ subscription.get_caption }}</p>
-              <form action="{% url 'create-checkout-session' %}" method="POST">
-                {% csrf_token %}
-                <input type="hidden" name="subscriptionId" value="{{ subscription.id }}">
-                <input type="hidden" name="stripePriceId" value="{{ subscription.stripe_price_id }}">
-                <button type="submit" id="checkout-button">Subscribe</button>
-            </form>
+                <h5 class="card-title">{{ subscription.title }}</h5>
+                <p class="card-text">{{ subscription.get_caption }}</p>
+                {% if is_chef %}
+                  <div class="row">
+                    <div class="col">
+                        <a class="btn btn-outline-secondary" href="{% url 'update_chef_subscription' chef_id=chef_id chef_subscription_id=subscription.id %}"><i class="fas fa-pencil-alt"></i> Edit</a>
+                    </div>
+                    <form action="{% url 'view_chef_subscription' chef_id=chef_id %}"  method="POST">
+                      {% csrf_token %}
+                        <button class="btn btn-outline-secondary" type="submit" name="delete" value="{{subscription.id}}">Deactivate</button>
+                    </form>
+                </div>
+                {% else %}
+                <form action="{% url 'create_checkout_session' %}" method="POST">
+                  {% csrf_token %}
+                  <input type="hidden" name="subscriptionId" value="{{ subscription.id }}">
+                  <input type="hidden" name="stripePriceId" value="{{ subscription.stripe_price_id }}">
+                  <button type="submit" class="btn btn-outline-secondary" id="checkout-button">Subscribe</button>
+                </form>
+              
+            {% endif%}
             </div>
           </div>
         </div>

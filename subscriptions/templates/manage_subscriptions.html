@@ -1,56 +1,65 @@
-{% extends "base.html" %}
+{% extends "template.html" %}
+{% load static %}
 
-{% block title %}Manage Subscriptions{% endblock %}
+
+{% block title %}
+   Create or Update Chef Subscription
+{% endblock title %}
 
 {% block style %}
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-    .subscription-card {
-        margin-bottom: 20px;
-    }
+        .container-md {
+            background-color: #e8f1ff; /* Example: light gray background */
+            padding: 30px;
+            border-radius: 10px;
+        }
+{% endblock style %}
 
-    .subscription-card .card-body {
-        padding: 20px;
-    }
-
-    .row {
-        margin-bottom: 20px;
-    }
-</style>
-{% endblock %}
-
-{% block content %}
-<div class="container mt-5">
-    <h1>Create a Subscription Plan</h1>
-
-    <!-- Subscription Form -->
-    <form method="post" actions="{% url 'create_chef_subscription' %}">
-        {% csrf_token %}
-        {% if not form.instance.id %}
-        {% include 'save_chef_subscription.html' %}
+{% block main_body %}
+<div class="container-md">
+    <div class="text-center">
+        {% if chef_subscription_id %}
+            <h1> Edit Chef Subscription</h1>
+        {% else %}
+            <h1> Create Chef Subscription</h1>
         {% endif %}
-        {% if chef_subscriptions %}
-    
-        <h2>Subscriptions</h2>
+    </div>
+<form method="post" action="{% if chef_subscription_id %}{% url 'update_chef_subscription' chef_id=chef_id chef_subscription_id=chef_subscription_id %}{% else %}{% url 'create_chef_subscription' chef_id=chef_id %}{% endif %}">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+        <!--Collection title-->
+        <div class="mb-3">
+            {{ form.title.errors }}
+            <label class="form-label" for="{{ form.title.id_for_label }}">Subscription title</label>
+            {{form.title}}
+        </div>
         <div class="row">
-            {% for subscription in chef_subscriptions %}
-            <div class="col-md-3">
-                <div class="card subscription-card">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ subscription.title }}</h5>
-                        <p class="card-text">{{ subscription.get_caption }}</p>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="btn-group">
-                                <button formnovalidate name='edit' class="btn btn-icon" value="{{ subscription.id }}"><i class="fas fa-pencil-alt"></i></button>
-                                <button formnovalidate name='delete' class="btn btn-icon" value="{{ subscription.id }}"><i class="fas fa-trash"></i></button>
-                            </div>
-                        </div>
-                    </div>
+            <div class="col">
+                <div class="mb-3">
+                    {{ form.time_quantity.errors }}
+                    <label class="form-label" for="{{ form.time_quantity.id_for_label }}">Amount of time</label>
+                    {{form.time_quantity}}
                 </div>
             </div>
-            {% endfor %}
-        </div>
-        {% endif %}
-    </form>
+            <div class="col">
+                <div class="mb-3">
+                    {{ form.time_unit.errors }}
+                    <label class="form-label" for="{{ form.time_unit.id_for_label }}">Unit of time</label>
+                    {{form.time_unit}}
+                </div>
+            </div>
+            <div class="col">
+                <div class="mb-3">
+                    {{ form.price.errors }}
+                    <label class="form-label" for="{{ form.price.id_for_label }}">Price</label>
+                    {{form.price}}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 text-right">
+                    <button type="submit" class="btn btn-primary float-end" name="save_chef_subscriptiton">Save Subscription</button>
+                </div>
+            </div>
+    </div>
+</form>      
 </div>
-{% endblock %}
+{% endblock main_body %}
