@@ -64,10 +64,10 @@ def edit_user_profile(request):
 @login_required
 def change_password(request):
     if request.method == 'POST':
-        form = PasswordChangeForm(request.user, request.POST)
+        form = PasswordChangeForm(user=request.user, data=request.POST)
         if form.is_valid():
-            user = form.save()
-            update_session_auth_hash(request, user)
+            form.save()
+            update_session_auth_hash(request, form.user)
             messages.success(
                 request, 'Your password was successfully updated!')
             return redirect('view_user_profile')
