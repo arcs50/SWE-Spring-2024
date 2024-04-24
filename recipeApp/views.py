@@ -32,43 +32,78 @@ def discover(request):
     if request.user.is_authenticated:
         params['is_authenticated'] = True
         params['avatar_dir'] = 'images/sad_cat.jpg'
-    
-    rec_recipes = [
-        {
-            'recipe_id': '123456',
-            'title': 'whwawhawh',
-            'posted_time': time.time(),
-            'chef_name': 'whawhawa',
-            'first_img_dir': 'images/sad_cat.jpg'
-        },
-        {
-            'recipe_id': '654321',
-            'title': 'whwawhawh',
-            'posted_time': time.time(),
-            'chef_name': 'whawhawa',
-            'first_img_dir': 'images/sad_cat.jpg'
+        
+    # get recipes
+    recipes = Recipe.objects.all()[:9]
+    rec_recipes = []
+    for recipe in recipes:
+        chef_person = Person.objects.get(id=recipe.chef_id)
+        rec_recipe = {
+            'recipe_id': recipe.id,
+            'chef_name': chef_person.first_name + ' ' + chef_person.last_name,
+            'recipe': recipe
         }
-    ]
+        rec_recipes.append(rec_recipe)
     
-    rec_chefs = [
-        {
-            'chef_id': '123456',
-            'title': 'whwawhawh',
-            'chef_name': 'whawhawa',
+    # get chefs
+    chefs = ChefProfile.objects.all()[:9]
+    rec_chefs = []
+    for chef in chefs:
+        chef_person = Person.objects.get(id=chef.chef_id)
+        rec_chef = {
+            'chef_id': chef.chef_id,
+            'title': chef.title,
+            'chef_name': chef_person.first_name + ' ' + chef_person.last_name,
             'avatar_dir': 'images/sad_cat.jpg'
         },
-        {
-            'chef_id': '123456',
-            'title': 'whwawhawh',
-            'chef_name': 'whawhawa',
-            'avatar_dir': 'images/sad_cat.jpg'
-        },
-    ]
+    
     
     params['rec_recipes'] = rec_recipes
     params['rec_chefs'] = rec_chefs
     
     return render(request, 'discover.html', params)
+
+def search(request):
+    if not request.POST:
+        return redirect(reverse("discover"))
+    
+    searchtext = request.POST['searchtext']
+    
+    params = {}   
+    if request.user.is_authenticated:
+        params['is_authenticated'] = True
+        params['avatar_dir'] = 'images/sad_cat.jpg'
+        
+    # get recipes
+    recipes = Recipe.objects.filter(title__icontains=searchtext)
+    rec_recipes = []
+        
+    for recipe in recipes:
+        chef_person = Person.objects.get(id=recipe.chef_id)
+        rec_recipe = {
+            'recipe_id': recipe.id,
+            'chef_name': chef_person.first_name + ' ' + chef_person.last_name,
+            'recipe': recipe
+        }
+        rec_recipes.append(rec_recipe)
+    
+    # get chefs
+    chefs = ChefProfile.objects.filter(title__icontains=searchtext)
+    rec_chefs = []
+    for chef in chefs:
+        chef_person = Person.objects.get(id=chef.chef_id)
+        rec_chef = {
+            'chef_id': chef.chef_id,
+            'title': chef.title,
+            'chef_name': chef_person.first_name + ' ' + chef_person.last_name,
+            'avatar_dir': 'images/sad_cat.jpg'
+        }
+        rec_chefs.append(rec_chef)
+    
+    params['rec_recipes'] = rec_recipes
+    params['rec_chefs'] = rec_chefs
+    
+    return render(request, 'search.html', params)
 
 @login_required
 def CreateUpdateChefProfile(request, chef_prof_id=None):
