@@ -285,11 +285,6 @@ def CreateUpdateCollection(request, chef_id, collection_id=None):
 
 
 
-
-
-
-
-
 def ViewCollection(request, chef_id, collection_id):
     is_chef = False
     if request.user.is_authenticated:
@@ -304,7 +299,6 @@ def ViewCollection(request, chef_id, collection_id):
         'is_chef':is_chef
     }
     return render(request, 'view_collection.html', context)
-
 
 
 
