@@ -7,6 +7,12 @@
 {% endblock title %}
 
 {% block style %}
+    .carousel .item {
+        <!-- background-color: #f7f1c3; /* Replace with your desired color */ -->
+        background-color:#f0f0f0;
+        <!-- padding-top: 20px;
+        border-radius: 10px; -->
+    }
         .container {
             background-color: #e8f1ff; /* Example: light gray background */
             <!-- background-color:#000000; -->
@@ -14,17 +20,17 @@
             border-radius: 10px;
         }
         .container-inner{
-            background-color: #e8f1ff; /* Example: light gray background */
+            background-color: #e8f1fe; /* Example: light gray background */
             <!-- background-color:#e8f1ff; -->
             padding-top: 20px;
             border-radius: 10px;
         }
         .container-top-title{
-            background-color: #f0f0f0;
+            background-color: #e8f1fg;
             <!-- background-color:#000000; -->
             padding-left: 20px;
             padding-right: 20px;
-            padding-top: 40px;
+            padding-top: 20px;
             padding-bottom: 40px; /* Reduce or remove padding to minimize space */
             margin-bottom: 0; /* Adjust this to align precisely with the carousel */
             border-radius: 10px;
@@ -39,39 +45,43 @@
             margin: 5px 0; /* Vertical spacing between social media links */
         }
 
-        .custom-bg {
-            background-color: #f7f1c3; /* Replace with your desired color */
-            <!-- background-color:#e8f1ff; -->
+        .custom-bg{
+            background-color:#f0f0f0;
         }
+
+       
 {% endblock style %}
 
 {% block main_body %}
 <div class="container h-100">
-    <div class="container-top-title">
-        {% if is_chef %}
-        <div class="row text-center border-bottom">
+    {% if is_chef %}
+        <div class="row text-center">
+            <div class="col-md-6">
+                
+            </div>
             <div class="col-md-2">
                 <a class="btn btn-outline-secondary" href="{% url 'create_recipe' %}"><i class="fas fa-pencil-alt"></i> Create Recipe</a>
             </div>
-            <div class="col-md-8">
+            <div class="col-md-2">
                 <a class="btn btn-outline-secondary" href="{% url 'create_collection' chef_id=chef_id %}"><i class="fas fa-pencil-alt"></i> Create Collection</a>
             </div>
-            <div class="col">
+            <div class="col-md-2">
                 <a class="btn btn-outline-secondary" href="{% url 'update_chef_prof' chef_prof.id %}"><i class="fas fa-pencil-alt"></i> Edit Profile</a>
             </div>
             <div><br></div>
         </div>
         <div><br></div>
         {% endif %}
+    <div class="container-top-title">
         <div class="row align-items-end">
             <div class="col-md-2 text-center">
                 <div>
                     <img class="rounded-circle profile-pic img-thumbnail"  src="{{ chef_prof.profile_picture.url }}">
                 </div>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-7">
                 <div>
-                    <h1>{{chef_prof.title}}</h1>
+                    <h1 class="text-center">{{chef_prof.title}}</h1>
                 </div> 
                 <div>
                     <br>
@@ -80,11 +90,11 @@
                     {{chef_prof.description}}
                 </div>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div>
                     <br>
                 </div>
-                <p>Contact {{chef_prof.chef.first_name}} {{chef_prof.chef.last_name}}</p>
+                <p class="text-center">Contact {{chef_prof.chef.first_name}} {{chef_prof.chef.last_name}}</p>
                 <div>
                 {% if chef_prof.display_email %}
                 <div>
@@ -124,34 +134,35 @@
     </div>
  
         <!-- carousel -->
-        <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
-            <div class="carousel-inner custom-bg">
-            {% for recipe in recipes %}
-            <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                <div class="row h-100 justify-content-center align-items-center border-bottom">
-                        <div class="col-md-8">
-                            <a href="{% url 'view_recipe' recipe.id %}" class="text-decoration-none">
-                                <img src="{{ recipe.recipe_image.url }}" class="d-block w-100">
-                            </a>
+        <!-- <div class="container-carousel"> -->
+            <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                {% for recipe in recipes %}
+                <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                    <div class="row h-100 justify-content-center align-items-center custom-bg">
+                            <div class="col-md-8">
+                                <a href="{% url 'view_recipe' recipe.id %}" >
+                                    <img src="{{ recipe.recipe_image.url }}" class="d-block w-100">
+                                </a>
+                            </div>
+                        <div class="col-md-4">
+                            <h2>{{recipe.title}}</h2>
+                            <p>{{recipe.description}}</p>
                         </div>
-                    <div class="col-md-4">
-                        <h2>{{recipe.title}}</h2>
-                        <p>{{recipe.description}}</p>
                     </div>
                 </div>
+                {% endfor %}
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+                </button>
             </div>
-            {% endfor %}
-            </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Next</span>
-            </button>
-  
-    </div>
+        <!-- </div> -->
     
     {% for collection in collections %}
     <div class="container-top-title text-center">
@@ -162,10 +173,10 @@
             </div>
         </div>
         {% endif %}
-    <h2>{{collection.title}}</h2>
+    <a class="link-dark" href="{% url 'view_collection' collection.chef.id collection.id %}"> <h2>{{collection.title}}</h2></a>
     <div><br></div>
 
-    <div id="multiItemCarousel" class="carousel slide" data-bs-ride="carousel">
+    <div id="multiItemCarousel" class="carousel slide border-bottom" data-bs-ride="carousel">
         <div class="carousel-inner">
             {% for recipe in collection.recipes.all %}
                 {% if forloop.counter0|divisibleby:3 %}
