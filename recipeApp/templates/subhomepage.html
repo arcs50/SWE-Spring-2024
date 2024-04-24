@@ -1,8 +1,8 @@
-{% extends "template.html" %}
+{% extends "recipeApp/base.html" %}
 {% load static %}
 
 {% block title %}
-    Home
+    Subscriber Home Page
 {% endblock title %}
 
 {% block style %}
@@ -11,51 +11,76 @@
 
 {% block main_body %}
     <div class="container overflow-hidden">
-        <div class="row p-1 m-1">
-            <div class="col-4">
-                <p>My Home</p>
+        <div class="row justify-content-between p-1 m-1">
+            <div class="col-auto">
+                <p>Welcome, {{ sub_name }} </p>
+                <form action="{% url 'logout' %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-primary">logout</button>
+                </form>
             </div>
-            <div class="col-3">
-                <p class="text-center"><button type="button" class="btn btn-primary">manage subscription</button></p>
+            <div class="col-auto">
+                <p class="text-center">
+                    <button type="button" class="btn btn-primary">manage subscription</button>
+                </p>
             </div>  
-            <div class="col-3">
+            <div class="col-auto">
                 <button type="button" class="btn btn-info">grocery list</button>
             </div>  
-            <div class="col-2">
-                <img src="{% static 'images/sad_cat.jpg' %}" class="rounded-circle img-thumbnail img-fluid">
+            <div class="col-auto">
+                <figure class="figure">
+                    <img src="{% static sub_avatar_dir %}" class="figure-img rounded-circle img-thumbnail img-fluid">
+                </figure>
             </div>    
         </div>
     </div>
     <div class="container overflow-hidden">
+        <div class="row p-1 m-1">
+            <div class="col-4">
+                <p>want to be a chef? 
+                    <form action="{% url 'to_chef_role' %}" method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-primary">click</button>
+                    </form>
+                </p>
+            </div>  
+        </div>
+    </div>
+    <div class="container overflow-hidden">
         <div class="row border border-dark rounded-3 p-1 m-1 gap-1">
-            <p>New Recipes from your subscription</p>
-            <div class="col-5 col-md-3">
+            <p>subscribed chefs:</p>
+            {% for sub_chef in sub_chefs %}
+            <div class="col-auto">
                 <div class="card">
-                    <img src="{% static 'images/sad_cat.jpg' %}" class="card-img-top img-thumbnail img-fluid" alt="...">
+                    <img src="{% static sub_chef.avatar_dir %}" class="card-img-top img-thumbnail img-fluid" alt="...">
                     <div class="card-body">
                         <ul class="list-group list-group-flush">
-                            <li class="list-group-item">An item</li>
-                            <li class="list-group-item">A second item</li>
-                            <li class="list-group-item">A third item</li>
+                            <li class="list-group-item">{{ sub_chef.title }}</li>
+                            <li class="list-group-item">{{ sub_chef.chef_name }}</li>
                         </ul>
                     </div>
                 </div>
             </div>  
-            <div class="col-5 col-md-3">
+            {% endfor %}  
+        </div>
+    </div>
+    <div class="container overflow-hidden">
+        <div class="row border border-dark rounded-3 p-1 m-1 gap-1">
+            <p>New Recipes from your subscription: </p>
+            {% for sub_recipe in sub_recipes %}
+            <div class="col-auto">
                 <div class="card">
-                    <img src="{% static 'images/sad_cat.jpg' %}" class="card-img-top img-thumbnail img-fluid" alt="...">
+                    <img src="{% static sub_recipe.first_img_dir %}" class="card-img-top img-thumbnail img-fluid" alt="...">
                     <div class="card-body">
                         <ul class="list-group list-group-flush">
-                            <li class="list-group-item">An item</li>
-                            <li class="list-group-item">A second item</li>
-                            <li class="list-group-item">A third item</li>
+                            <li class="list-group-item">{{ sub_recipe.title }}</li>
+                            <li class="list-group-item">{{ sub_recipe.posted_time }}</li>
+                            <li class="list-group-item">{{ sub_recipe.chef_name }}</li>
                         </ul>
                     </div>
                 </div>
-            </div>   
-            <div class="col-1 col-md-3">
-                <p>...</p>
-            </div>   
+            </div>  
+            {% endfor %}  
         </div>
     </div>
 {% endblock main_body %}

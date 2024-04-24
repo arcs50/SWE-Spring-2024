@@ -1,9 +1,9 @@
 <!-- templates/home.html-->
-{% extends "base.html" %}
+{% extends "recipeApp/base.html" %}
 
 {% block title %}Home{% endblock %}
 
-{% block content %}
+{% block main_body %}
 {% if user.is_authenticated %}
 Hi {{ user.email }}!
 <form action="{% url 'logout' %}" method="post">

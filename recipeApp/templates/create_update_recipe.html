@@ -1,0 +1,276 @@
+{% extends "recipeApp/base.html" %}
+{% load static %}
+
+
+{% block title %}
+   Create Recipe
+{% endblock title %}
+
+{% block style %}
+        .container-md {
+            background-color: #e8f1ff; /* Example: light gray background */
+            padding: 30px;
+            border-radius: 10px;
+        }
+{% endblock style %}
+
+{% block main_body %}
+    
+    <div class="shadow-sm p-3 mb-5 container-md">
+        {% if recipe_id %}
+            <h1 style="text-align: center;">Edit Recipe</h1>
+        {% else %}
+            <h1 style="text-align: center;">Create a Recipe</h1>
+        {% endif %}
+        <form method="post" enctype="multipart/form-data" action="{% if recipe_id %}{% url 'update_recipe' recipe_id=recipe_id %}{% else %}{% url 'create_recipe' %}{% endif %}">
+            {% csrf_token %}
+            <!-- Management data of formset -->
+            {{ form.non_field_errors }}
+            <!--recipe image-->
+            <div class="row">
+                <!--recipe title-->
+                <div class="col">
+                    <div class="mb-3">
+                        {{ form.title.errors }}
+                        <label class="form-label" for="{{ form.title.id_for_label }}">Title</label>
+                        {{form.title}}
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="mb-3">
+                        {{form.recipe_image.errors}}
+                        <label class="form-label" for="{{ form.recipe_image.id_for_label }}">Upload Photo</label>
+                        {{form.recipe_image}}
+                    </div>
+                </div>
+                <!--switches-->
+                <div class="col col-lg-2">
+                    <div class="form-check form-switch">
+                        <label class="form-check-label" for="{{ form.pinned.id_for_label }}">Pin recipe</label>
+                        {{form.pinned}}
+                    </div>
+                    <div class="form-check form-switch">
+                        <label class="form-check-label" for="{{ form.free_to_nonsubscriber.id_for_label }}">Free to view</label>
+                        {{form.free_to_nonsubscriber}}
+                    </div>
+                </div>
+            </div>
+        
+        <div class = row>
+            <!--recipe prep time-->
+            <div class="col">
+                <div class="mb-3">
+                    {{ form.prep_time_minutes.errors }}
+                    <label class="form-label" for="{{form.prep_time_minutes.id_for_label}}">Prep Time</label>
+                    <div class="input-group">
+                        {{form.prep_time_minutes}}
+                        <span class="input-group-text">min</span>
+                    </div>
+                </div>
+            </div>
+            <!--recipe cook time-->
+            <div class="col">
+                <div class="mb-3">
+                    {{ form.cook_time_minutes.errors }}
+                    <label class="form-label" for="{{form.cook_time_minutes.id_for_label}}">Cook Time</label>
+                    <div class="input-group">
+                        {{form.cook_time_minutes}}
+                        <span class="input-group-text">min</span>
+                    </div>
+                </div>
+            </div>
+            <!--number of servings-->
+            <div class="col">
+                <div class="mb-3">
+                    {{ form.servings.errors }}
+                    <label class="form-label" for="{{form.servings.id_for_label}}">Number of servings</label>
+                    {{form.servings}}
+                </div>
+            </div>
+        </div>
+        <!--form.description-->
+        <div class="mb-3">
+            {{ form.description.errors }}
+            <label class="form-label" for="{{ form.description.id_for_label }}">Description</label>
+            {{form.description}}
+        </div>
+      
+    <h2>Ingredients</h2> 
+      
+    <div id="form-container">
+        <!-- Using the formset -->
+        {{formset.management_form}}
+        {% for form in formset %}
+        <div class="ingredient-form">
+            {{ form.id }} 
+            {% for hidden in form.hidden_fields %}
+                {{ hidden }}
+            {% endfor %}
+            {{ form.non_field_errors }}
+            {% for field in form %}
+                {{ field.errors }}
+            {% endfor %}
+            <div class="row">
+                <div class="col col-lg-1">
+                    <div class="mb-3">
+                        {{ form.order.errors }}
+                        <label class="form-label" for="{{form.order.id_for_label}}">Order</label>
+                        {{form.order}}
+                    </div>
+                </div>
+                <div class="col col-lg-1">
+                    <div class="mb-3">
+                        {{ form.quantity.errors }}
+                        <label class="form-label" for="{{form.quantity.id_for_label}}">Quantity</label>
+                        {{form.quantity}}
+                    </div>
+                </div>
+                <div class="col col-lg-2">
+                    <div class="mb-3">
+                        {{ form.measurement.errors }}
+                        <label class="form-label" for="{{form.measurement.id_for_label}}">Unit</label>
+                        {{form.measurement}}
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="mb-3">
+                        {{ form.food.errors }}
+                        <label class="form-label" for="{{ form.food.id_for_label }}">Ingredient</label>
+                        {{form.food}}
+                    </div>
+                </div>
+                <div class="col col-lg-1">
+                    <div class="d-flex align-items-center h-100">
+                        <div class="mb-3">
+                    {{ form.DELETE.errors }}
+                        <input class="form-check-input" type="checkbox" name="{{form.DELETE.html_name}}" id="{{form.DELETE.id_for_label}}">
+                        <label class="form-check-label" for="{{ form.DELETE.id_for_label }}">Delete</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+        {% endfor %}
+            
+            <button class="btn btn-icon" id="add-form" type="button"><i class="fa-solid fa-circle-plus"></i></button>
+    
+    
+    <h2>Instructions</h2>     
+    
+    
+    <div id="instruction-form-container">
+        <!-- Using the formset -->
+        {{instruction_formset.management_form}}
+        {% for form in instruction_formset %}
+        <div class="instruction-form">
+            {{ form.id }} 
+            {% for hidden in form.hidden_fields %}
+                {{ hidden }}
+            {% endfor %}
+            {{ form.non_field_errors }}
+            {% for field in form %}
+                {{ field.errors }}
+            {% endfor %}
+            <div class="row">
+                <div class="col col-lg-1">
+                    <div class="mb-3">
+                        {{ form.order.errors }}
+                        <label class="form-label" for="{{form.order.id_for_label}}">Order</label>
+                        {{form.order}}
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="mb-3">
+                        {{ form.text.errors }}
+                        <label class="form-label" for="{{ form.text.id_for_label }}">Text</label>
+                        {{form.text}}
+                    </div>
+                </div>
+                <div class="col col-lg-1">
+                    <div class="d-flex align-items-center h-100">
+                        <div class="mb-3">
+                    {{ form.DELETE.errors }}
+                        <input class="form-check-input" type="checkbox" name="{{form.DELETE.html_name}}" id="{{form.DELETE.id_for_label}}">
+                        <label class="form-check-label" for="{{ form.DELETE.id_for_label }}">Delete</label>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+            {% endfor %}
+            
+            <button class="btn btn-icon" id="add-instruction-form" type="button"><i class="fa-solid fa-circle-plus"></i></button>
+    
+              <!--save-->
+            <div class="row">
+                <div class="col-md-12 text-right">
+                    <button type="submit" class="btn btn-primary float-end" name='save_recipe'>Save</button>
+                </div>
+            </div>
+        </div>
+        </form> 
+</div>
+    
+      
+{% endblock main_body %}
+
+{% block scripts %} 
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const container = document.querySelector("#form-container");
+        const addButton = document.querySelector("#add-form");
+        const totalForms = document.querySelector("#id_ingredient_set-TOTAL_FORMS");
+        const originalForm = container.querySelector('.ingredient-form');
+
+        addButton.addEventListener('click', function(e) {
+            e.preventDefault();
+
+            let formNum = container.querySelectorAll('.ingredient-form').length; // Get the number of current forms
+            let newForm = originalForm.cloneNode(true); // Clone the first form
+            
+            // Update form index and names/ids
+            newForm.innerHTML = newForm.innerHTML.replace(/form-\d+-/g, `form-${formNum}-`);
+            newForm.innerHTML = newForm.innerHTML.replace(/id_ingredient_set-\d+-/g, `id_ingredient_set-${formNum}-`);
+            newForm.innerHTML = newForm.innerHTML.replace(/ingredient_set-\d+-/g, `ingredient_set-${formNum}-`);
+            const inputs = newForm.querySelectorAll(`#id_ingredient_set-${formNum}-id`)
+            inputs.forEach((input) => {
+                input.removeAttribute('value');
+            });
+           
+            container.insertBefore(newForm, addButton);
+            totalForms.setAttribute('value', `${formNum+1}`) // Increment the total form count
+        });
+    });
+</script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const container = document.querySelector("#instruction-form-container");
+        const addButton = document.querySelector("#add-instruction-form");
+        const totalForms = document.querySelector("#id_instruction_set-TOTAL_FORMS");
+        const originalForm = container.querySelector('.instruction-form');
+
+        addButton.addEventListener('click', function(e) {
+            e.preventDefault();
+
+            let formNum = container.querySelectorAll('.instruction-form').length; // Get the number of current forms
+            let newForm = originalForm.cloneNode(true); // Clone the first form
+            
+            // Update form index and names/ids
+            newForm.innerHTML = newForm.innerHTML.replace(/form-\d+-/g, `form-${formNum}-`);
+            newForm.innerHTML = newForm.innerHTML.replace(/id_instruction_set-\d+-/g, `id_instruction_set-${formNum}-`);
+            newForm.innerHTML = newForm.innerHTML.replace(/instruction_set-\d+-/g, `instruction_set-${formNum}-`);
+            const inputs = newForm.querySelectorAll(`#id_instruction_set-${formNum}-id`)
+            inputs.forEach((input) => {
+                input.removeAttribute('value');
+            });
+           
+            container.insertBefore(newForm, addButton);
+            totalForms.setAttribute('value', `${formNum+1}`) // Increment the total form count
+        });
+    });
+</script>
+
+
+{% endblock scripts %}
+
+    

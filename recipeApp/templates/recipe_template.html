@@ -1,0 +1,30 @@
+<a href="{% url 'view_recipe' recipe.id %}" class="text-decoration-none">
+        <div class="card mb-3">
+            <div class="card-body {% if not recipe.free_to_nonsubscriber %} text-secondary {% endif %}">
+                <img class="card-img-top" src="{{ recipe.recipe_image.url }}" alt="Image of {{ recipe.title }}">
+                <h5 class="card-title">{{ recipe.title }}</h5>
+                <p class="card-text">{{chef_name}}</p>
+                <p class="card-text">{{recipe.posted_time}}</p>
+                <div class="row">
+                    <div class="col">
+                        {% for _ in recipe.get_avg_rating.avg_rating_full %}
+                            <i class="fa-solid fa-star"></i>
+                        {% endfor %}
+                        {% for _ in recipe.get_avg_rating.avg_rating_partial %}
+                            <i class="fa-regular fa-star-half-stroke"></i>
+                        {% endfor %}
+                        {% for _ in recipe.get_avg_rating.avg_rating_empty %}
+                            <i class="fa-regular fa-star"></i>
+                        {% endfor %}
+                        <p class="card-text">{{recipe.get_avg_rating.avg_rating}} ({{recipe.get_count_rating}})</p>
+                    </div>
+                </div>
+                <p class="card-text">{{recipe.get_total_time}}</p>
+                <div class="d-flex justify-content-between align-items-center">
+                    <div class="btn-group">
+                        <!-- Consider removing interactive elements like buttons if the entire card is clickable -->
+                    </div>
+                </div>
+            </div>
+        </div>
+</a>

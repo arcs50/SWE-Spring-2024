@@ -1,0 +1,44 @@
+{% extends "recipeApp/base.html"  %}
+{% load static %}
+
+
+{% block title %}
+   Create or Update Chef Profile
+{% endblock title %}
+
+{% block style %}
+        .container-md {
+            background-color: #e8f1ff; /* Example: light gray background */
+            padding: 30px;
+            border-radius: 10px;
+        }
+
+{% endblock style %}
+
+{% block main_body %}
+<div class="container-md">
+    <div class="text-center">
+        <h1>Bookmarked Recipes</h1>
+    </div>
+    <div>
+        <br>
+    </div>
+    <div class="row">
+        {% if bookmarks %}
+            {% for bookmark in bookmarks %}
+            {% with recipe=bookmark.recipe %}
+            <div class="col-lg-4 d-flex align-items-stretch">
+            {% include 'recipe_template.html' %}
+            </div>
+            {% endwith %}
+            {% endfor %}
+        {% else %}
+            <p>You have no bookmarked recipes.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock main_body %}
+
+
+
+    
