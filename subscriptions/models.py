@@ -18,6 +18,7 @@ class ChefSubscription(models.Model):
     time_unit = models.CharField(max_length=1, choices=TIME_UNITS)
     price = models.DecimalField(max_digits=6, decimal_places=2, validators=[MinValueValidator(Decimal('0.00'))])
     active = models.BooleanField(default=True)
+    stripe_price_id = models.CharField(max_length=50, blank=True, null=True)
 
     class Meta:
         unique_together = ["chef","title","time_quantity","time_unit","price"]
@@ -44,6 +45,14 @@ class ChefSubscription(models.Model):
         if plural:
             caption += "s"
         return caption
+
+    def get_time_unit(self):
+        if self.time_unit == 'W':
+            return "week"
+        elif self.time_unit == "M":
+            return "month"
+        else:
+            return "year"
 
 class SubscriptionToChef(models.Model):
     subscriber = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)

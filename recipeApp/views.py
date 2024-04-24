@@ -55,8 +55,8 @@ def discover(request):
             'title': chef.title,
             'chef_name': chef_person.first_name + ' ' + chef_person.last_name,
             'avatar_dir': 'images/sad_cat.jpg'
-        }
-        rec_chefs.append(rec_chef)
+        },
+    
     
     params['rec_recipes'] = rec_recipes
     params['rec_chefs'] = rec_chefs
@@ -122,7 +122,7 @@ def CreateUpdateChefProfile(request, chef_prof_id=None):
                     saved_chef_prof.chef_id = request.user.id
                     saved_chef_prof.save()
                     socialmedia_formset.save()
-                    #return redirect('',chef_prof_id = saved_chef_prof.id)
+                    return redirect('view_chef_prof',chef_prof_id = saved_chef_prof.id)
             except Exception as e:  # To catch and log any error
                 form.add_error(None, f'An error occurred: {str(e)}')
     else:
@@ -247,6 +247,25 @@ def ViewRecipe(request, recipe_id):
         }
     return render(request, 'view_recipe.html', context)
 
+def ViewChefProfile(request, chef_prof_id):
+    chef_prof = get_object_or_404(ChefProfile, id=chef_prof_id)
+    is_chef = False
+    if request.user.is_authenticated:
+        if chef_prof.chef == request.user:
+            is_chef = True
+    social_media = SocialMedia.objects.filter(chef_prof_id=chef_prof_id)
+    recipes = Recipe.objects.filter(chef=chef_prof.chef)
+    collections = Collection.objects.filter(chef=chef_prof.chef)
+    context = {
+        'chef_prof':chef_prof,
+        'is_chef':is_chef,
+        'social_media':social_media,
+        'recipes':recipes,
+        'collections':collections,
+        'chef_id':chef_prof.chef.id,
+    }
+    return render(request, 'view_chef_prof.html', context)
+
 def CreateUpdateCollection(request, chef_id, collection_id=None):
     if request.user.is_authenticated and request.user.id == chef_id:
         collection = Collection()
@@ -264,53 +283,6 @@ def CreateUpdateCollection(request, chef_id, collection_id=None):
                 return redirect('view_collection', chef_id=chef_id, collection_id=collection.id)  # Redirect to a success page or the collection detail view
         return render(request, 'create_update_collection.html', {'form': form, 'chef_id': chef_id, 'collection_id':collection_id})
 
-# def ManageSubscriptionView(request, chef_id, chef_subscription_id=None):
-#     if request.user.is_authenticated and request.user.id == chef_id:
-#         context = {}
-#         chef_subscription = ChefSubscription()
-#         if chef_subscription_id:
-#             chef_subscription = get_object_or_404(ChefSubscription, id = chef_subscription_id)
-#         form = ChefSubscriptionForm(instance=chef_subscription)
-#         if request.method == 'POST':
-#             form = ChefSubscriptionForm(request.POST, instance=chef_subscription)
-#             if form.is_valid():
-#                 # Assuming that form.instance.chef will be set to request.user in the form's save method
-#                 subscription = form.save(commit=False)
-#                 subscription.chef = request.user
-#                 subscription.active = True
-                
-#                 # Now let's create a product in Stripe
-#                 try:
-#                     # Create a product
-#                     product = stripe.Product.create(name=subscription.title)
-#                     # Create a price
-#                     price = stripe.Price.create(
-#                         unit_amount=int(subscription.price * 100),  # Price in cents
-#                         currency="usd",
-#                         recurring= {"aggregate_usage": None, "interval": subscription.get_time_unit(), "interval_count": subscription.time_quantity, "trial_period_days": None, "usage_type": "licensed"},
-#                         product=product.id,
-#                     )
-#                     subscription.stripe_price_id = price.id  # Save the Stripe price ID to your model
-#                     subscription.save()
-#                     form=ChefSubscriptionForm()
-#                 except stripe.error.StripeError as e:
-#                     # Handle Stripe exceptions
-#                     context['error'] = str(e)
-    
-#         context.update({
-#             'form': form,
-#             'chef_id':chef_id, 
-#             'chef_subscription_id':chef_subscription_id'
-#         })
-        
-#         return render(request, 'manage_subscriptions.html', context)
-
-
-
-
-
-
-
 
 
 def ViewCollection(request, chef_id, collection_id):
@@ -327,18 +299,6 @@ def ViewCollection(request, chef_id, collection_id):
         'is_chef':is_chef
     }
     return render(request, 'view_collection.html', context)
-
-def ViewChefSubscriptions(request, chef_id):
-    chef_subscriptions = ChefSubscription.objects.filter(chef_id=chef_id)
-    if request.user.is_authenticated:
-        if chef_id == request.user.id:
-            is_chef = True
-
-    context = {
-        'chef_subscriptions': chef_subscriptions,
-        'is_chef':is_chef
-    }
-    return render(request, 'view_chef_subscriptions.html', context)
 
 
 
