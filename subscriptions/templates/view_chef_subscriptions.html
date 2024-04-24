@@ -31,6 +31,7 @@
                 <form action="{% url 'create_checkout_session' %}" method="POST">
                   {% csrf_token %}
                   <input type="hidden" name="subscriptionId" value="{{ subscription.id }}">
+                  <input type="hidden" name="chef_id" value="{{ subscription.chef.id }}">
                   <input type="hidden" name="stripePriceId" value="{{ subscription.stripe_price_id }}">
                   <button type="submit" class="btn btn-outline-secondary" id="checkout-button">Subscribe</button>
                 </form>
