@@ -1,0 +1,23 @@
+<div class="card">
+    <div class="card-body">
+        <h5 class="card-title">{{ subscription.title }}</h5>
+        <p class="card-text">{{ subscription.get_caption }}</p>
+        {% if not is_chef %}
+            <form action="{% url 'create-checkout-session' %}" method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="subscriptionId" value="{{ subscription.id }}">
+                <input type="hidden" name="stripePriceId" value="{{ subscription.stripe_price_id }}">
+                <button class="btn btn-outline-secondary" type="submit" id="checkout-button">Subscribe</button>
+            </form>
+        {% else %}
+            <div class="row">
+                <div class="col">
+                    <a class="btn btn-outline-secondary" href="{% url 'update_chef_subscription' chef_id=chef_id chef_subscription_id=subscription.id %}"><i class="fas fa-pencil-alt"></i> Edit</a>
+                </div>
+                <form action="{% url 'view_chef_subscription' chef_id=chef_id %}"  method="DELETE">
+                    <button class="btn btn-outline-secondary" type="submit" id="delete" value="{{subscription.id}}">Deactivate</button>
+                </form>
+            </div>
+    {% endif%}
+    </div>
+  </div>

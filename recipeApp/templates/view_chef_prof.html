@@ -1,0 +1,213 @@
+{% extends "recipeApp/base.html" %}
+{% load static %}
+
+
+{% block title %}
+   View Chef Profile
+{% endblock title %}
+
+{% block style %}
+    .carousel .item {
+        <!-- background-color: #f7f1c3; /* Replace with your desired color */ -->
+        background-color:#f0f0f0;
+        <!-- padding-top: 20px;
+        border-radius: 10px; -->
+    }
+        .container {
+            background-color: #e8f1ff; /* Example: light gray background */
+            <!-- background-color:#000000; -->
+            padding: 30px;
+            border-radius: 10px;
+        }
+        .container-inner{
+            background-color: #e8f1fe; /* Example: light gray background */
+            <!-- background-color:#e8f1ff; -->
+            padding-top: 20px;
+            border-radius: 10px;
+        }
+        .container-top-title{
+            background-color: #e8f1fg;
+            <!-- background-color:#000000; -->
+            padding-left: 20px;
+            padding-right: 20px;
+            padding-top: 20px;
+            padding-bottom: 40px; /* Reduce or remove padding to minimize space */
+            margin-bottom: 0; /* Adjust this to align precisely with the carousel */
+            border-radius: 10px;
+        }
+        .profile-pic {
+            width: 150px;  /* Define a fixed size */
+            height: 150px; /* Same value as the width for a perfect circle */
+            object-fit: cover; /* Ensures the image covers the space without being distorted */
+                    }
+    
+        .social-media-links div {
+            margin: 5px 0; /* Vertical spacing between social media links */
+        }
+
+        .custom-bg{
+            background-color:#f0f0f0;
+        }
+
+       
+{% endblock style %}
+
+{% block main_body %}
+<div class="container h-100">
+    {% if is_chef %}
+        <div class="row text-center">
+            <div class="col-md-6">
+                
+            </div>
+            <div class="col-md-2">
+                <a class="btn btn-outline-secondary" href="{% url 'create_recipe' %}"><i class="fas fa-pencil-alt"></i> Create Recipe</a>
+            </div>
+            <div class="col-md-2">
+                <a class="btn btn-outline-secondary" href="{% url 'create_collection' chef_id=chef_id %}"><i class="fas fa-pencil-alt"></i> Create Collection</a>
+            </div>
+            <div class="col-md-2">
+                <a class="btn btn-outline-secondary" href="{% url 'update_chef_prof' chef_prof.id %}"><i class="fas fa-pencil-alt"></i> Edit Profile</a>
+            </div>
+            <div><br></div>
+        </div>
+        <div><br></div>
+        {% endif %}
+    <div class="container-top-title">
+        <div class="row align-items-end">
+            <div class="col-md-2 text-center">
+                <div>
+                    <img class="rounded-circle profile-pic img-thumbnail"  src="{{ chef_prof.profile_picture.url }}">
+                </div>
+            </div>
+            <div class="col-md-7">
+                <div>
+                    <h1 class="text-center">{{chef_prof.title}}</h1>
+                </div> 
+                <div>
+                    <br>
+                </div>
+                <div>
+                    {{chef_prof.description}}
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div>
+                    <br>
+                </div>
+                <p class="text-center">Contact {{chef_prof.chef.first_name}} {{chef_prof.chef.last_name}}</p>
+                <div>
+                {% if chef_prof.display_email %}
+                <div>
+                    <i class="fa-solid fa-envelope"></i> {{chef_prof.chef.email}}
+                </div>
+                {% endif %}
+                {% for social in social_media %}
+                    {% if social.platform == 'TW' %}
+                    <div>
+                        <i class="fa-brands fa-x-twitter"></i> <a class="link-dark" href="{{social.url}}">{{social.handle}}</a>
+                    </div>
+                    {% elif social.platform == 'I' %}
+                    <div>
+                        <i class="fa-brands fa-instagram"></i> <a class="link-dark" href="{{social.url}}">{{social.handle}}</a>
+                    </div>
+                    {% elif social.platform == 'F' %}
+                    <div>
+                        <i class="fa-brands fa-facebook-f"></i> <a class="link-dark" href="{{social.url}}">{{social.handle}}</a>
+                    </div>
+                    {% elif social.platform == 'Y' %}
+                    <div>
+                        <i class="fa-brands fa-youtube"></i> <a class="link-dark" href="{{social.url}}">{{social.handle}}</a>
+                    </div>
+                    {% elif social.platform == 'TK' %}
+                    <div>
+                        <i class="fa-brands fa-tiktok"></i> <a class="link-dark" href="{{social.url}}">{{social.handle}}</a>
+                    </div>
+                    {% elif social.platform == 'S' %}
+                    <div>
+                        <i class="fa-brands fa-snapchat"></i> <a class="link-dark" href="{{social.url}}">{{social.handle}}</a>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>  
+    </div>
+ 
+        <!-- carousel -->
+        <!-- <div class="container-carousel"> -->
+            <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner">
+                {% for recipe in recipes %}
+                <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                    <div class="row h-100 justify-content-center align-items-center custom-bg">
+                            <div class="col-md-8">
+                                <a href="{% url 'view_recipe' recipe.id %}" >
+                                    <img src="{{ recipe.recipe_image.url }}" class="d-block w-100">
+                                </a>
+                            </div>
+                        <div class="col-md-4">
+                            <h2>{{recipe.title}}</h2>
+                            <p>{{recipe.description}}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+                </button>
+            </div>
+        <!-- </div> -->
+    
+    {% for collection in collections %}
+    <div class="container-top-title text-center">
+        {% if is_chef %}
+        <div class="row">
+            <div class="col-md-12 text-right">
+                <a class="btn btn-outline-secondary float-end" href="{% url 'update_collection' collection.chef.id collection.id %}"><i class="fas fa-pencil-alt"></i> Edit Collection</a>
+            </div>
+        </div>
+        {% endif %}
+    <a class="link-dark" href="{% url 'view_collection' collection.chef.id collection.id %}"> <h2>{{collection.title}}</h2></a>
+    <div><br></div>
+
+    <div id="multiItemCarousel" class="carousel slide border-bottom" data-bs-ride="carousel">
+        <div class="carousel-inner">
+            {% for recipe in collection.recipes.all %}
+                {% if forloop.counter0|divisibleby:3 %}
+                    {% if forloop.first %}
+                    <div class="carousel-item active">
+                    {% else %}
+                    <div class="carousel-item">
+                    {% endif %}
+                    <div class="row">
+                {% endif %}
+                        <div class="col-md-4">
+                            {% include 'recipe_template.html' %}
+                        </div>
+                {% if forloop.counter|divisibleby:3 or forloop.last %}
+                    </div>
+                    </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#multiItemCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#multiItemCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+</div>
+</div>
+    {% endfor %}
+
+
+{% endblock main_body %}
