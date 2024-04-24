@@ -1,0 +1,164 @@
+{% extends "recipeApp/base.html"  %}
+{% load static %}
+
+
+{% block title %}
+   Create or Update Chef Profile
+{% endblock title %}
+
+{% block style %}
+        .container-md {
+            background-color: #e8f1ff; /* Example: light gray background */
+            padding: 30px;
+            border-radius: 10px;
+        }
+{% endblock style %}
+
+{% block main_body %}
+    
+    <div class="shadow-sm p-3 mb-5 container-md">
+        {% if chef_prof_id %}
+            <h1 style="text-align: center;">Edit Chef Profile</h1>
+        {% else %}
+            <h1 style="text-align: center;">Create Chef Profile</h1>
+        {% endif %}
+        <form method="post" enctype="multipart/form-data" action="{% if chef_prof_id %}{% url 'update_chef_prof' chef_prof_id=chef_prof_id %}{% else %}{% url 'create_chef_prof' %}{% endif %}">
+            {% csrf_token %}
+            <!-- Management data of formset -->
+            {{ form.non_field_errors }}
+            <!--recipe image-->
+            <div class="row">
+                <!--Chef profile title-->
+                <div class="col">
+                    <div class="mb-3">
+                        {{ form.title.errors }}
+                        <label class="form-label" for="{{ form.title.id_for_label }}">Title</label>
+                        {{form.title}}
+                    </div>
+                </div>
+                <!--Chef profile picture-->
+                <div class="col">
+                    <div class="mb-3">
+                        {{form.profile_picture.errors}}
+                        <label class="form-label" for="{{ form.profile_picture.id_for_label }}">Upload Profile Picture</label>
+                        {{form.profile_picture}}
+                    </div>
+                </div>
+                <!--switch-->
+                <div class="col col-lg-2">
+                    <div class="form-check form-switch">
+                        <label class="form-check-label" for="{{ form.display_email.id_for_label }}">Display email publicly</label>
+                        {{form.display_email}}
+                    </div>
+                </div>
+            </div>
+        
+        <div class = row>
+            <!--Chef Description-->
+            <div class="col">
+                <div class="mb-3">
+                    {{ form.description.errors }}
+                    <label class="form-label" for="{{ form.description.id_for_label }}">Description</label>
+                    {{form.description}}
+                </div>
+            </div>
+        </div>
+      
+    <h2>Social Media</h2> 
+      
+    <div id="form-container">
+        <!-- Add social media -->
+        {{formset.management_form}}
+        {% for form in formset %}
+        <div class="socialmedia-form">
+            {{ form.id }} 
+            {% for hidden in form.hidden_fields %}
+                {{ hidden }}
+            {% endfor %}
+            {{ form.non_field_errors }}
+            {% for field in form %}
+                {{ field.errors }}
+            {% endfor %}
+            <div class="row">
+                <div class="col">
+                    <div class="mb-3">
+                        {{ form.handle.errors }}
+                        <label class="form-label" for="{{ form.handle.id_for_label }}">Handle</label>
+                        {{form.handle}}
+                    </div>
+                </div>
+                <div class="col col-lg-2">
+                    <div class="mb-3">
+                        {{ form.platform.errors }}
+                        <label class="form-label" for="{{form.platform.id_for_label}}">Platform</label>
+                        {{form.platform}}
+                    </div>
+                </div>
+                <div class="col col-lg-3">
+                    <div class="mb-3">
+                        {{ form.url.errors }}
+                        <label class="form-label" for="{{form.url.id_for_label}}">Url</label>
+                        {{form.url}}
+                    </div>
+                </div>
+                <div class="col col-lg-1">
+                    <div class="d-flex align-items-center h-100">
+                        <div class="mb-3">
+                    {{ form.DELETE.errors }}
+                        <input class="form-check-input" type="checkbox" name="{{form.DELETE.html_name}}" id="{{form.DELETE.id_for_label}}">
+                        <label class="form-check-label" for="{{ form.DELETE.id_for_label }}">Delete</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+        {% endfor %}
+            
+            <button class="btn btn-icon" id="add-form" type="button"><i class="fa-solid fa-circle-plus"></i></button>
+    
+
+              <!--save-->
+            <div class="row">
+                <div class="col-md-12 text-right">
+                    <button type="submit" class="btn btn-primary float-end" name="save_chef_prof">Save</button>
+                </div>
+            </div>
+        </div>
+    </form> 
+</div>
+    
+      
+{% endblock main_body %}
+
+{% block scripts %} 
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const container = document.querySelector("#form-container");
+        const addButton = document.querySelector("#add-form");
+        const totalForms = document.querySelector("#id_socialmedia_set-TOTAL_FORMS");
+        const originalForm = container.querySelector('.socialmedia-form');
+
+        addButton.addEventListener('click', function(e) {
+            e.preventDefault();
+
+            let formNum = container.querySelectorAll('.socialmedia-form').length; // Get the number of current forms
+            let newForm = originalForm.cloneNode(true); // Clone the first form
+            
+            // Update form index and names/ids
+            newForm.innerHTML = newForm.innerHTML.replace(/form-\d+-/g, `form-${formNum}-`);
+            newForm.innerHTML = newForm.innerHTML.replace(/id_socialmedia_set-\d+-/g, `id_socialmedia_set-${formNum}-`);
+            newForm.innerHTML = newForm.innerHTML.replace(/socialmedia_set-\d+-/g, `socialmedia_set-${formNum}-`);
+            const inputs = newForm.querySelectorAll(`#id_socialmedia_set-${formNum}-id`)
+            inputs.forEach((input) => {
+                input.removeAttribute('value');
+            });
+           
+            container.insertBefore(newForm, addButton);
+            totalForms.setAttribute('value', `${formNum+1}`) // Increment the total form count
+        });
+    });
+</script>
+
+{% endblock scripts %}
+
+    
