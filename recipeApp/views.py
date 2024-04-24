@@ -32,81 +32,43 @@ def discover(request):
     if request.user.is_authenticated:
         params['is_authenticated'] = True
         params['avatar_dir'] = 'images/sad_cat.jpg'
-        
-    # get recipes
-    recipes = Recipe.objects.all()[:9]
-    rec_recipes = []
-    for recipe in recipes:
-        chef_person = Person.objects.get(id=recipe.chef_id)
-        rec_recipe = {
-            'recipe_id': recipe.id,
-            'title': recipe.title,
-            'posted_time': recipe.posted_time,
-            'chef_name': chef_person.first_name + ' ' + chef_person.last_name,
+    
+    rec_recipes = [
+        {
+            'recipe_id': '123456',
+            'title': 'whwawhawh',
+            'posted_time': time.time(),
+            'chef_name': 'whawhawa',
+            'first_img_dir': 'images/sad_cat.jpg'
+        },
+        {
+            'recipe_id': '654321',
+            'title': 'whwawhawh',
+            'posted_time': time.time(),
+            'chef_name': 'whawhawa',
             'first_img_dir': 'images/sad_cat.jpg'
         }
-        rec_recipes.append(rec_recipe)
+    ]
     
-    # get chefs
-    chefs = ChefProfile.objects.all()[:9]
-    rec_chefs = []
-    for chef in chefs:
-        chef_person = Person.objects.get(id=chef.chef_id)
-        rec_chef = {
-            'chef_id': chef.chef_id,
-            'title': chef.title,
-            'chef_name': chef_person.first_name + ' ' + chef_person.last_name,
+    rec_chefs = [
+        {
+            'chef_id': '123456',
+            'title': 'whwawhawh',
+            'chef_name': 'whawhawa',
             'avatar_dir': 'images/sad_cat.jpg'
-        }
-        rec_chefs.append(rec_chef)
+        },
+        {
+            'chef_id': '123456',
+            'title': 'whwawhawh',
+            'chef_name': 'whawhawa',
+            'avatar_dir': 'images/sad_cat.jpg'
+        },
+    ]
     
     params['rec_recipes'] = rec_recipes
     params['rec_chefs'] = rec_chefs
     
     return render(request, 'discover.html', params)
-
-def search(request):
-    if not request.POST:
-        return redirect(reverse("discover"))
-    
-    searchtext = request.POST['searchtext']
-    
-    params = {}   
-    if request.user.is_authenticated:
-        params['is_authenticated'] = True
-        params['avatar_dir'] = 'images/sad_cat.jpg'
-        
-    # get recipes
-    recipes = Recipe.objects.filter(title__contains=searchtext)
-    rec_recipes = []
-    for recipe in recipes:
-        chef_person = Person.objects.get(id=recipe.chef_id)
-        rec_recipe = {
-            'recipe_id': recipe.id,
-            'title': recipe.title,
-            'posted_time': recipe.posted_time,
-            'chef_name': chef_person.first_name + ' ' + chef_person.last_name,
-            'first_img_dir': 'images/sad_cat.jpg'
-        }
-        rec_recipes.append(rec_recipe)
-    
-    # get chefs
-    chefs = ChefProfile.objects.filter(title__contains=searchtext)
-    rec_chefs = []
-    for chef in chefs:
-        chef_person = Person.objects.get(id=chef.chef_id)
-        rec_chef = {
-            'chef_id': chef.chef_id,
-            'title': chef.title,
-            'chef_name': chef_person.first_name + ' ' + chef_person.last_name,
-            'avatar_dir': 'images/sad_cat.jpg'
-        }
-        rec_chefs.append(rec_chef)
-    
-    params['rec_recipes'] = rec_recipes
-    params['rec_chefs'] = rec_chefs
-    
-    return render(request, 'search.html', params)
 
 @login_required
 def CreateUpdateChefProfile(request, chef_prof_id=None):
@@ -125,7 +87,7 @@ def CreateUpdateChefProfile(request, chef_prof_id=None):
                     saved_chef_prof.chef_id = request.user.id
                     saved_chef_prof.save()
                     socialmedia_formset.save()
-                    #return redirect('',chef_prof_id = saved_chef_prof.id)
+                    return redirect('view_chef_prof',chef_prof_id = saved_chef_prof.id)
             except Exception as e:  # To catch and log any error
                 form.add_error(None, f'An error occurred: {str(e)}')
     else:
@@ -250,6 +212,25 @@ def ViewRecipe(request, recipe_id):
         }
     return render(request, 'view_recipe.html', context)
 
+def ViewChefProfile(request, chef_prof_id):
+    chef_prof = get_object_or_404(ChefProfile, id=chef_prof_id)
+    is_chef = False
+    if request.user.is_authenticated:
+        if chef_prof.chef == request.user:
+            is_chef = True
+    social_media = SocialMedia.objects.filter(chef_prof_id=chef_prof_id)
+    recipes = Recipe.objects.filter(chef=chef_prof.chef)
+    collections = Collection.objects.filter(chef=chef_prof.chef)
+    context = {
+        'chef_prof':chef_prof,
+        'is_chef':is_chef,
+        'social_media':social_media,
+        'recipes':recipes,
+        'collections':collections,
+        'chef_id':chef_prof.chef.id,
+    }
+    return render(request, 'view_chef_prof.html', context)
+
 def CreateUpdateCollection(request, chef_id, collection_id=None):
     if request.user.is_authenticated and request.user.id == chef_id:
         collection = Collection()
@@ -267,6 +248,13 @@ def CreateUpdateCollection(request, chef_id, collection_id=None):
                 return redirect('view_collection', chef_id=chef_id, collection_id=collection.id)  # Redirect to a success page or the collection detail view
         return render(request, 'create_update_collection.html', {'form': form, 'chef_id': chef_id, 'collection_id':collection_id})
 
+
+
+
+
+
+
+
 def ViewCollection(request, chef_id, collection_id):
     is_chef = False
     if request.user.is_authenticated:
@@ -281,6 +269,9 @@ def ViewCollection(request, chef_id, collection_id):
         'is_chef':is_chef
     }
     return render(request, 'view_collection.html', context)
+
+
+
 
 def ViewBookmarks(request, subscriber_id):
     if request.user.is_authenticated and request.user.id == subscriber_id:
