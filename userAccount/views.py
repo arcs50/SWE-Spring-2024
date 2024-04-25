@@ -23,19 +23,6 @@ class SignUpView(CreateView):
     template_name = "registration/signup.html"
 
 
-def to_chef_role(request):
-    # if request.POST:
-    #     obj, created = Role.objects.update_or_create(
-    #         id=request.user.id,
-    #         role='C',
-    #         defaults={'id': request.user.id, 'role': 'C'}
-    #     )
-    #     return HttpResponse("You are a chef now.")
-    # else:
-    #     return HttpResponse("something wrong")
-    return HttpResponse("something wrong")
-
-
 @login_required
 def user_profile_view(request):
     user = request.user
