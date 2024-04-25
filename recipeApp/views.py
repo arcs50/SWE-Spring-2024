@@ -334,13 +334,13 @@ def subscriber_home(request):
         sub_chef = {
             'chef_id': chef_profile.chef_id,
             'chef_name': chef_person.first_name + ' ' + chef_person.last_name,
-            'avatar_dir': chef_profile.profile_picture.url
+            'chef': chef_profile
         }
         sub_chefs.append(sub_chef)
     # get subscribed recipes
     sub_recipes = []
     for sub_chef in sub_chefs:
-        chef_recipes = Recipe.objects.filter(chef_id=sub_chef.chef_id)
+        chef_recipes = Recipe.objects.filter(chef_id=sub_chef['chef_id'])
         for chef_recipe in chef_recipes:
             recipe_info = {
                 'recipe_id': chef_recipe.id,
@@ -349,7 +349,9 @@ def subscriber_home(request):
             }
             sub_recipes.append(recipe_info)
     # sort sub_recipes based on post time
-    sub_recipes.sort(key=lambda x:x.posted_time)
+    sub_recipes.sort(key=lambda x:x['recipe'].posted_time)
+    
+    bookmarks = BookmarkedRecipes.objects.filter(subscriber=request.user)
     
     params = {
         'sub_id': request.user.id,
@@ -357,25 +359,8 @@ def subscriber_home(request):
         'sub_name' : person.first_name + ' ' + person.last_name,
         'sub_avatar_dir': 'images/sad_cat.jpg',
         'sub_chefs': sub_chefs,
-        'sub_recipes': sub_recipes
+        'sub_recipes': sub_recipes,
+        'bookmarks':bookmarks
     }
 
     return render(request, 'subhomepage.html', params)
-
-def chef_home(request):
-    if not request.user.is_authenticated:
-        return redirect(reverse("signup"))
-    role = Role.objects.filter(id=request.user.id)
-    if (not role) or (role[0].role != 'C'):
-        return HttpResponse("You are not a chef.")
-    
-    params = {
-        'chef_id': request.user.id,
-        'chef_username': request.user.get_username(),
-        'chef_avatar_dir': 'images/sad_cat.jpg',
-        'chef_name': 'aaa',
-        'chef_description': 'this is aaa chef.',
-        'chef_display_email': 'xxx@gmail.com'
-    }
-    
-    return render(request, 'chefhome.html', params)

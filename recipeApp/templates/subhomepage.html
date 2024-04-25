@@ -30,6 +30,18 @@
             {% endfor %}
         </div>
     </div>
+    <div class="container overflow-hidden">
+        <div class="row border border-dark rounded-3 p-1 m-1 gap-1">
+            <p>bookmarks: </p>
+            {% for bookmark in bookmarks %}
+                {% with recipe=bookmark.recipe %}
+                <div class="col-lg-4 d-flex align-items-stretch">
+                    {% include 'recipe_template.html' %}
+                </div>
+                {% endwith %}
+            {% endfor %}
+        </div>
+    </div>
 {% endblock main_body %}
 
 {% block scripts %} 
