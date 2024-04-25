@@ -37,6 +37,7 @@
         <div class="row h-100 justify-content-center align-items-center border-bottom">
             <div class="col-md-4">
                 <h1>{{recipe.title}}</h1>
+                <a class="link-dark" href="{% url 'view_chef_prof' recipe.chef.id %}">{{recipe.chef.first_name}} {{recipe.chef.last_name}}</a>
                 <div class="row">
                     <div class="col">
                         {% for _ in avg_rating_full %}

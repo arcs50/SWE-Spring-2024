@@ -12,27 +12,6 @@
 
 {% block main_body %}
     <div class="container overflow-hidden">
-        <div class="row justify-content-between p-1 m-1">
-            <div class="col-auto">
-                <p>Discover your recipes. </p>
-            </div>   
-            <div class="col-auto">
-                {% if is_authenticated %}
-                <img src="{% static avatar_dir %}" class="rounded-circle img-thumbnail img-fluid">
-                <form action="{% url 'logout' %}" method="post">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-primary">logout</button>
-                </form>
-                {% else %}
-                <form action="{% url 'signup' %}" method="post">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-primary">signup</button>
-                </form>
-                {% endif %}
-            </div>    
-        </div>
-    </div>
-    <div class="container overflow-hidden">
         <form class="row p-1 m-1 form-inline" role="form" action="{% url 'search' %}" method="post">
             {% csrf_token %}
             <div class="col-auto">
@@ -65,23 +44,15 @@
             {% endfor %}  
         </div>
     </div>
+
     <div class="container overflow-hidden">
         <div class="row border border-dark rounded-3 p-1 m-1 gap-1">
             <p>recommend recipes: </p>
             {% for rec_recipe in rec_recipes %}
-            <div class="col-auto">
-                <div class="card">
-                    <img src="{% static rec_recipe.first_img_dir %}" class="card-img-top img-thumbnail img-fluid" alt="...">
-                    <div class="card-body">
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item">{{ rec_recipe.title }}</li>
-                            <li class="list-group-item">{{ rec_recipe.posted_time }}</li>
-                            <li class="list-group-item">{{ rec_recipe.chef_name }}</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>  
-            {% endfor %}  
+            <div class="col-lg-4 d-flex align-items-stretch">
+                {% include 'recipe_template.html' with recipe=rec_recipe.recipe chef_name=rec_recipe.chef_name%}
+            </div>
+            {% endfor %}
         </div>
     </div>
 {% endblock main_body %}
