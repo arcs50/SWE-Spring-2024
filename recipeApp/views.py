@@ -103,7 +103,7 @@ def search(request):
     params['rec_recipes'] = rec_recipes
     params['rec_chefs'] = rec_chefs
     
-    return render(request, 'search.html', params)
+    return render(request, 'discover.html', params)
 
 @login_required
 def CreateUpdateChefProfile(request, chef_prof_id=None):
@@ -333,10 +333,10 @@ def subscriber_home(request):
         chef_person = Person.objects.get(id=chef_subscription.chef_id)
         sub_chef = {
             'chef_id': chef_profile.chef_id,
-            'title': chef_profile.title,
             'chef_name': chef_person.first_name + ' ' + chef_person.last_name,
-            'avatar_dir': 'images/sad_cat.jpg'
+            'avatar_dir': chef_profile.profile_picture.url
         }
+        sub_chefs.append(sub_chef)
     # get subscribed recipes
     sub_recipes = []
     for sub_chef in sub_chefs:
@@ -344,32 +344,13 @@ def subscriber_home(request):
         for chef_recipe in chef_recipes:
             recipe_info = {
                 'recipe_id': chef_recipe.id,
-                'title': chef_recipe.title,
-                'posted_time': chef_recipe.posted_time,
-                'chef_name': sub_chef.chef_name,
-                'first_img_dir': 'images/sad_cat.jpg'
+                'chef_name': chef_person.first_name + ' ' + chef_person.last_name,
+                'recipe': chef_recipe
             }
             sub_recipes.append(recipe_info)
     # sort sub_recipes based on post time
     sub_recipes.sort(key=lambda x:x.posted_time)
     
-    # sample params
-    sub_recipes = [
-        {
-            'recipe_id': '123456',
-            'title': 'whwawhawh',
-            'posted_time': time.time(),
-            'chef_name': 'whawhawa',
-            'first_img_dir': 'images/sad_cat.jpg'
-        },
-        {
-            'recipe_id': '654321',
-            'title': 'whwawhawh',
-            'posted_time': time.time(),
-            'chef_name': 'whawhawa',
-            'first_img_dir': 'images/sad_cat.jpg'
-        }
-    ]
     params = {
         'sub_id': request.user.id,
         'sub_username': request.user.get_username(),
@@ -378,7 +359,6 @@ def subscriber_home(request):
         'sub_chefs': sub_chefs,
         'sub_recipes': sub_recipes
     }
-    
 
     return render(request, 'subhomepage.html', params)
 
