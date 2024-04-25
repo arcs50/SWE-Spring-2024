@@ -47,6 +47,7 @@ def discover(request):
     
     # get chefs
     chefs = ChefProfile.objects.all()[:9]
+    chef_profs = ChefProfile.objects.all()
     rec_chefs = []
     for chef in chefs:
         chef_person = Person.objects.get(id=chef.chef_id)
@@ -60,6 +61,7 @@ def discover(request):
     
     params['rec_recipes'] = rec_recipes
     params['rec_chefs'] = rec_chefs
+    params['chef_profs'] = chef_profs
     
     return render(request, 'discover.html', params)
 
