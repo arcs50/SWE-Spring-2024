@@ -44,6 +44,8 @@ def discover(request):
             'recipe': recipe
         }
         rec_recipes.append(rec_recipe)
+
+    chef_profs = ChefProfile.objects.all()
     
     # get chefs
     chefs = ChefProfile.objects.all()[:9]
@@ -57,7 +59,7 @@ def discover(request):
             'avatar_dir': 'images/sad_cat.jpg'
         },
     
-    
+    params['chef_profs'] = chef_profs
     params['rec_recipes'] = rec_recipes
     params['rec_chefs'] = rec_chefs
     
