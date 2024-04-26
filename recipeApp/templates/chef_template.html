@@ -1,0 +1,9 @@
+<a href="{% url 'view_chef_prof' chef.chef_id %}" class="text-decoration-none">
+        <div class="card mb-3">
+            <div class="card-body">
+                <img class="card-img-top" src="{{ chef.profile_picture.url }}" alt="Image of {{ chef.title }}">
+                <h5 class="card-title">{{ chef.title }}</h5>
+                <p class="card-text">{{chef_name}}</p>
+            </div>
+        </div>
+</a>
