@@ -16,6 +16,10 @@ class ChefProfile(models.Model):
 
     def __str__(self):
         return self.title, self.description
+    
+    def get_discovery_recipes(self):
+        recipes = Recipe.objects.filter(chef = self.chef).order_by('-free_to_nonsubscriber','posted_time')
+        return recipes
 
 class SocialMedia(models.Model):
     chef_prof = models.ForeignKey(ChefProfile, on_delete=models.CASCADE)

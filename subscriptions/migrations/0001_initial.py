@@ -15,6 +15,7 @@ class Migration(migrations.Migration):
     operations = [
         migrations.CreateModel(
             name='ChefSubscription',
+            name='ChefSubscription',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('title', models.CharField(max_length=255)),
@@ -27,6 +28,7 @@ class Migration(migrations.Migration):
         ),
         migrations.CreateModel(
             name='SiteSubscription',
+            name='SiteSubscription',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('title', models.CharField(max_length=255)),
@@ -37,7 +39,11 @@ class Migration(migrations.Migration):
         ),
         migrations.CreateModel(
             name='SubscriptionToChef',
+            name='SubscriptionToChef',
             fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('start_date', models.DateTimeField(default=django.utils.timezone.now)),
+                ('blocked', models.BooleanField(default=False)),
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('start_date', models.DateTimeField(default=django.utils.timezone.now)),
                 ('blocked', models.BooleanField(default=False)),
@@ -45,7 +51,11 @@ class Migration(migrations.Migration):
         ),
         migrations.CreateModel(
             name='SubscriptionToSite',
+            name='SubscriptionToSite',
             fields=[
+                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('start_date', models.DateTimeField(default=django.utils.timezone.now)),
+            ],
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('start_date', models.DateTimeField(default=django.utils.timezone.now)),
             ],
