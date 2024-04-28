@@ -9,7 +9,7 @@
     <div class="card mx-auto p-md-3" style="width: 75%;">
         <div class="d-flex align-content-end justify-content-end">
             {% if not is_chef and not is_admin %}
-                <a href="" class="btn btn-primary align-content-end me-2">Become Chef</a>
+                <a href="{% url 'view_site_subscriptions' %}" class="btn btn-primary align-content-end me-2">Become Chef</a>
             {% endif %}
             {% if not is_subscriber and not is_admin %}
                 <a href="" class="btn btn-primary align-content-end me-2">Become Subscriber</a>
