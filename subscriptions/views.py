@@ -138,7 +138,10 @@ def payment_success(request):
             subscriber_id=user_id,
             chef_subscription=chef_subscription
         )
-        return redirect('view_chef_prof', chef_id=chef_subscription.chef.id)
+        try:
+            return redirect('view_chef_prof', chef_id=chef_subscription.chef.id)
+        except:
+            return HttpResponse("payment succeeded!")
     except Exception as e:
         return HttpResponse(f"An error occurred: {str(e)}", status=500)
 
