@@ -6,81 +6,44 @@
 {% endblock title %}
 
 {% block style %}
+
+        .row {
+            background-color: #e8f1ff;
+        }
     
 {% endblock style %}
 
 {% block main_body %}
     <div class="container overflow-hidden">
-        <div class="row justify-content-between p-1 m-1">
-            <div class="col-auto">
-                <p>Welcome, {{ sub_name }} </p>
-                <form action="{% url 'logout' %}" method="post">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-primary">logout</button>
-                </form>
-            </div>
-            <div class="col-auto">
-                <p class="text-center">
-                    <button type="button" class="btn btn-primary">manage subscription</button>
-                </p>
-            </div>  
-            <div class="col-auto">
-                <button type="button" class="btn btn-info">grocery list</button>
-            </div>  
-            <div class="col-auto">
-                <figure class="figure">
-                    <img src="{% static sub_avatar_dir %}" class="figure-img rounded-circle img-thumbnail img-fluid">
-                </figure>
-            </div>    
-        </div>
-    </div>
-    <div class="container overflow-hidden">
-        <div class="row p-1 m-1">
-            <div class="col-4">
-                <p>want to be a chef? 
-                    <form action="{% url 'to_chef_role' %}" method="post">
-                        {% csrf_token %}
-                        <button type="submit" class="btn btn-primary">click</button>
-                    </form>
-                </p>
-            </div>  
-        </div>
-    </div>
-    <div class="container overflow-hidden">
         <div class="row border border-dark rounded-3 p-1 m-1 gap-1">
-            <p>subscribed chefs:</p>
+            <p>subscribe chefs: </p>
             {% for sub_chef in sub_chefs %}
-            <div class="col-auto">
-                <div class="card">
-                    <img src="{% static sub_chef.avatar_dir %}" class="card-img-top img-thumbnail img-fluid" alt="...">
-                    <div class="card-body">
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item">{{ sub_chef.title }}</li>
-                            <li class="list-group-item">{{ sub_chef.chef_name }}</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>  
-            {% endfor %}  
+            <div class="col-lg-4 d-flex align-items-stretch">
+                {% include 'chef_template.html' with chef=sub_chef.chef chef_name=sub_chef.chef_name%}
+            </div>
+            {% endfor %}
         </div>
     </div>
     <div class="container overflow-hidden">
         <div class="row border border-dark rounded-3 p-1 m-1 gap-1">
-            <p>New Recipes from your subscription: </p>
+            <p>new recipes: </p>
             {% for sub_recipe in sub_recipes %}
-            <div class="col-auto">
-                <div class="card">
-                    <img src="{% static sub_recipe.first_img_dir %}" class="card-img-top img-thumbnail img-fluid" alt="...">
-                    <div class="card-body">
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item">{{ sub_recipe.title }}</li>
-                            <li class="list-group-item">{{ sub_recipe.posted_time }}</li>
-                            <li class="list-group-item">{{ sub_recipe.chef_name }}</li>
-                        </ul>
-                    </div>
+            <div class="col-lg-4 d-flex align-items-stretch">
+                {% include 'recipe_template.html' with recipe=sub_recipe.recipe chef_name=sub_recipe.chef_name%}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="container overflow-hidden">
+        <div class="row border border-dark rounded-3 p-1 m-1 gap-1">
+            <p>bookmarks: </p>
+            {% for bookmark in bookmarks %}
+                {% with recipe=bookmark.recipe %}
+                <div class="col-lg-4 d-flex align-items-stretch">
+                    {% include 'recipe_template.html' %}
                 </div>
-            </div>  
-            {% endfor %}  
+                {% endwith %}
+            {% endfor %}
         </div>
     </div>
 {% endblock main_body %}

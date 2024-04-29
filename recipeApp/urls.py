@@ -10,7 +10,6 @@ from .views import CreateUpdateRecipe, ViewRecipe, CreateUpdateChefProfile, Crea
 urlpatterns = [
     path("discover", views.discover, name="discover"),
     path("subscriberhome", views.subscriber_home, name="subscriber_home"),
-    path("chefhome", views.index, name="index"),
     path("search", views.search, name="search"),
     path("create_chef_prof/", CreateUpdateChefProfile, name="create_chef_prof"),
     path("update_chef_prof/<int:chef_prof_id>", CreateUpdateChefProfile, name="update_chef_prof"),

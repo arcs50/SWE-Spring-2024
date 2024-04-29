@@ -140,7 +140,6 @@ def payment_success(request):
             subscriber_id=user_id,
             chef_subscription=chef_subscription
         )
-
         chef_profile=ChefProfile.objects.get(chef_id=chef_subscription.chef.id)
 
         return redirect('view_chef_prof', chef_prof_id=chef_profile.id)
