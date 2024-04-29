@@ -13,10 +13,11 @@
     <br/>
     <div class="card mx-auto p-md-3" style="width: 75%;">
         <div class="d-flex align-content-end justify-content-end">
-            {% if is_chef %}
+            {% if not is_chef and not is_admin %}
+                <a href="{% url 'view_site_subscriptions' %}" class="btn btn-primary align-content-end me-2">Become Chef</a>
+
+            {% elif is_chef %}
                 <a href="{% url 'view_chef_prof' %}" class="btn btn-primary align-content-end me-2">View My Chef Profile</a>
-            {% elif not is_admin %}
-                <a href="" class="btn btn-primary align-content-end me-2">Become Chef</a>
             {% endif %}
             <a href="{% url 'edit_user_profile' %}" class="btn btn-info align-content-end">Edit Profile</a>
         </div>
