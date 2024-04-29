@@ -1,18 +1,22 @@
 {% extends "recipeApp/base.html" %}
 
 {% block title %}My Profile{% endblock %} 
-
+{% block style %}
+    .card{
+        background-color: #e8f1ff;
+        border-radius: 10px;
+    }
+{% endblock %}
 {% block main_body %}
 <div class="container mt-4">
     <h1 class="text-center">Profile Details</h1>
     <br/>
     <div class="card mx-auto p-md-3" style="width: 75%;">
         <div class="d-flex align-content-end justify-content-end">
-            {% if not is_chef and not is_admin %}
+            {% if is_chef %}
+                <a href="{% url 'view_chef_prof' %}" class="btn btn-primary align-content-end me-2">View My Chef Profile</a>
+            {% elif not is_admin %}
                 <a href="" class="btn btn-primary align-content-end me-2">Become Chef</a>
-            {% endif %}
-            {% if not is_subscriber and not is_admin %}
-                <a href="" class="btn btn-primary align-content-end me-2">Become Subscriber</a>
             {% endif %}
             <a href="{% url 'edit_user_profile' %}" class="btn btn-info align-content-end">Edit Profile</a>
         </div>
@@ -57,7 +61,7 @@
                                 <li>{{ role.get_role_display }}</li>
                             {% endfor %}
                         {% else %}
-                            <li>Non-Subscriber</li>
+                            <li>Subscriber</li>
                         {% endif %}
                     </ul>
                 </div>

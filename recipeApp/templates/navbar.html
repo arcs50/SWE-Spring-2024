@@ -1,5 +1,12 @@
 {% load static %}
-<nav class="navbar navbar-expand-lg bg-body-tertiary">
+<style>
+.navbar{
+  background-color: #e8f1ff;
+  border-radius: 10px;
+}
+</style>
+
+<nav class="navbar navbar-expand-lg">
     <div class="container-fluid">
       <a class="navbar-brand" href="{% url 'discover' %}">Cooking Master</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -67,8 +74,11 @@
             <ul class="dropdown-menu">
               <li><a class="dropdown-item" href="{% url 'view_user_profile' %}">My Profile</a></li>
               <li><a class="dropdown-item" href="#">My Recipes</a></li>
-              <li><a class="dropdown-item" href="{% url 'site_subscription' %}">My Subscriptions</a></li>
-              <li><a class="dropdown-item" href="#">My Followers</a></li>
+              <!-- { url 'view_bookmarks' } -->
+              <li><a class="dropdown-item" href="{% url 'subscriber_home' %}">My Subscriptions</a></li>
+              {% if is_chef %}
+                <li><a class="dropdown-item" href="#">My Sbuscribers</a></li>
+              {% endif %}
               <li><hr class="dropdown-divider"></li>
               <li><a class="dropdown-item" href="#">Settings</a></li>
             </ul>

@@ -11,7 +11,10 @@ Hi {{ user.email }}!
   <button type="submit">Log Out</button>
 </form>
 {% else %}
-<p>You are not logged in</p>
-<a href="{% url 'login' %}">Log In</a>
+<div class="card mx-auto mt-4 p-md-5 align-items-center" style="width:50%;">
+  <h1 class="text-center">You are not logged in</h1>
+  <p>Log in to see your personalized home page</p>
+  <a class="btn btn-lg btn-block btn-primary" href="{% url 'login' %}">Log In</a>
+</div>
 {% endif %}
 {% endblock %}
