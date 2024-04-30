@@ -1,11 +1,36 @@
-{% extends 'base.html' %}
+{% extends 'template.html' %}
 
-{% block content %}
+{% block title %}
+
+View Chef Subscriptions
+{% endblock title %}
+
+{% block style %}
+<style>
+  .profile-pic {
+    max-width: 200px;  /* Limit the size of the photo */
+    max-height: 200px; /* Maintain aspect ratio */
+    border-radius: 50%; /* Optional: rounds the corners into a circle */
+    display: block;    /* To apply margin auto */
+    margin: 20px auto; /* Centers the image horizontally */
+  }
+  body, h1, h2, h3, h4, h5, p {
+    color: #000; /* Ensures text is black for readability */
+  }
+  .card {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Light shadow for clean appearance */
+    margin-bottom: 20px; /* Adds spacing between cards */
+  }
+  .text-center {
+    text-align: center; /* Centers the text of the chef profile */
+  }
+</style>
+{% endblock style %}
+
+{% block main_body %}
 <div class="container">
-  <div class="chef-profile">
-    <h1>Sahil's Profile</h1>
-    <!-- Here you would display the chef's profile picture -->
-    <!-- <img src="{{ chef_profile.picture.url }}" alt="{{ chef.username }}"> -->
+  <div class="chef-profile text-center">
+    <h1>{{ chef_profile.title }}'s Profile</h1>
   </div>
 
   <div class="subscription-list">
@@ -15,28 +40,30 @@
         <div class="col-md-4">
           <div class="card">
             <div class="card-body">
-                <h5 class="card-title">{{ subscription.title }}</h5>
-                <p class="card-text">{{ subscription.get_caption }}</p>
-                {% if is_chef %}
-                  <div class="row">
-                    <div class="col">
-                        <a class="btn btn-outline-secondary" href="{% url 'update_chef_subscription' chef_id=chef_id chef_subscription_id=subscription.id %}"><i class="fas fa-pencil-alt"></i> Edit</a>
-                    </div>
-                    <form action="{% url 'view_chef_subscription' chef_id=chef_id %}"  method="POST">
-                      {% csrf_token %}
-                        <button class="btn btn-outline-secondary" type="submit" name="delete" value="{{subscription.id}}">Deactivate</button>
-                    </form>
+              <h5 class="card-title">{{ subscription.title }}</h5>
+              <p class="card-text">{{ subscription.get_caption }}</p>
+              {% if is_chef %}
+                <div class="row">
+                  <div class="col">
+                    <a class="btn btn-outline-secondary" href="{% url 'update_chef_subscription' chef_id=chef_id chef_subscription_id=subscription.id %}">
+                      <i class="fas fa-pencil-alt"></i> Edit
+                    </a>
+                  </div>
+                  <form action="{% url 'view_chef_subscription' chef_id=chef_id %}" method="POST">
+                    {% csrf_token %}
+                    <button class="btn btn-outline-secondary" type="submit" name="delete" value="{{ subscription.id }}">Deactivate</button>
+                  </form>
                 </div>
-                {% else %}
+              {% else %}
                 <form action="{% url 'create_checkout_session' %}" method="POST">
                   {% csrf_token %}
                   <input type="hidden" name="subscriptionId" value="{{ subscription.id }}">
                   <input type="hidden" name="chef_id" value="{{ subscription.chef.id }}">
+                  <input type="hidden" name="subscriptionType" value="chef">
                   <input type="hidden" name="stripePriceId" value="{{ subscription.stripe_price_id }}">
                   <button type="submit" class="btn btn-outline-secondary" id="checkout-button">Subscribe</button>
                 </form>
-              
-            {% endif%}
+              {% endif %}
             </div>
           </div>
         </div>
@@ -45,7 +72,5 @@
       {% endfor %}
     </div>
   </div>
-
-  <!-- Add the section for recipes here -->
 </div>
-{% endblock %}
+{% endblock main_body %}

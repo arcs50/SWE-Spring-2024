@@ -73,6 +73,7 @@ class SiteSubscription(models.Model):
     }
     time_unit = models.CharField(max_length=10, choices=TIME_UNITS)
     price = models.DecimalField(max_digits=6, decimal_places=2)
+    stripe_price_id = models.CharField(max_length=50, blank=True, null=True)
 
     def __str__(self):
         return self.title

@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container" style="padding-top: 40px;">
+  <div class="text-center">
+    <h1 class="display-4">Cooking Master</h1>
+    <p class="lead">Choose your subscription and start your culinary journey!</p>
+  </div>
+
+  <div class="row" style="margin-top: 20px;">
+    {% for subscription in site_subscriptions %}
+      <div class="col-md-4 mb-3">
+        <div class="card h-100">
+          <div class="card-body">
+            <h5 class="card-title">{{ subscription.title }}</h5>
+            <p class="card-text">{{ subscription.description }}</p>
+            <p class="card-text"><strong>Price:</strong> ${{ subscription.price }}</p>
+            <form action="{% url 'create_checkout_session' %}" method="POST">
+              {% csrf_token %}
+              <input type="hidden" name="stripePriceId" value="{{ subscription.stripe_price_id }}">
+              <input type="hidden" name="subscriptionId" value="{{ subscription.id }}">
+              <input type="hidden" name="subscriptionType" value="site">
+              <button type="submit" class="btn btn-primary" id="checkout-button">Subscribe</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <p class="text-center">No site subscriptions available at the moment.</p>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+  body, h1, h2, h3, h4, h5, p {
+    color: #000; /* Black text color for readability on white background */
+  }
+  .card {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Lighter shadow for a clean look */
+  }
+</style>
+{% endblock %}
