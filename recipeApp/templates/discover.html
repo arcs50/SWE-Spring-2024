@@ -31,8 +31,7 @@
 {% endblock style %}
 
 {% block main_body %}
-<div class="container">
-    <div class="container overflow-hidden">
+    <div class="container">
         <form class="row p-1 m-1 form-inline" role="form" action="{% url 'discover' %}" method="post">
             {% csrf_token %}
             <div class="col-auto">
@@ -50,11 +49,13 @@
         <div class="container overflow-hidden">
             <div class="row border border-dark rounded-3 p-1 m-1 gap-1">
                 <h2>Recipe search results<h2>
-                {% for recipe in search_recipes %}
-                    <div class="col-lg-4 d-flex align-items-stretch">
-                        {% include 'recipe_template.html' %}
-                    </div>
-                {% endfor %}
+                <div class="row">
+                    {% for recipe in search_recipes %}
+                        <div class="col-lg-4 d-flex align-items-stretch">
+                            {% include 'recipe_template.html' %}
+                        </div>
+                    {% endfor %}
+                </div>
             </div>
         </div>
         {% endif %}
@@ -72,7 +73,6 @@
             {% include 'chef_prof_template.html' %}
         {% endfor %}
     </div>
-</div>
 {% endblock main_body %}
 
 {% block scripts %} 
