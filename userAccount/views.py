@@ -7,10 +7,11 @@ from django.urls import reverse_lazy
 from django.views.generic.edit import CreateView
 from .models import Person
 from django.contrib import messages
+from subscriptions.models import SubscriptionToChef, SubscriptionToSite
 
 # Create your views here.
 from django.http import HttpResponse
-from userAccount.models import Role
+#from userAccount.models import Role
 
 
 def index(request):
@@ -26,9 +27,9 @@ class SignUpView(CreateView):
 @login_required
 def user_profile_view(request):
     user = request.user
-    is_chef = user.role.filter(id=user.id, role='C').exists()
-    is_subscriber = user.role.filter(id=user.id, role='S').exists()
-    is_admin = user.role.filter(id=user.id, role='A').exists()
+    is_chef = SubscriptionToSite.objects.filter(chef = request.user).exists()
+    is_subscriber = SubscriptionToChef.objects.filter(subscriber_id=request.user.id).exists()
+    is_admin = request.user.is_admin
     return render(request, 'profile/user_profile.html',
                   {'user': user, 'is_chef': is_chef,
                       'is_subscriber': is_subscriber,

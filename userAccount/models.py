@@ -27,23 +27,14 @@ class CustomUserManager(BaseUserManager):
         if extra_fields.get('is_superuser') is not True:
             raise ValueError('Superuser must have is_superuser=True.')
         user = self.create_user(email=email, password=password,**extra_fields)
-        user.role.add(Role.objects.get(role='A'))
         return user
 
 
-class Role(models.Model):
-    ROLES = {
-        ("C","chef"),
-        ("S","subscriber"),
-        ("A","admin")
-    }
-    role = models.CharField(max_length=1, choices=ROLES, unique=True)
 
 class Person(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=255, unique=True)
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
-    role = models.ManyToManyField(Role)
     is_admin = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     date_joined = models.DateTimeField(default=timezone.now)

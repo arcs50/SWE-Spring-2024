@@ -1,0 +1,55 @@
+<div class="container-inner border border-dark rounded-3 overflow-hidden">
+                <div class="row border-bottom border-dark">
+                    <div class="col-md-2 text-center">
+                        <img class="rounded-circle profile-pic img-thumbnail"  src="{{ chef_prof.profile_picture.url }}">
+                    </div>
+                    <div class="col-md-8">
+                        <div>
+                            <a class="link-dark" text-decoration="None" href="{% url 'view_chef_prof' chef_prof.id %}"><h1 class="text-center">{{chef_prof.title}}</h1></a>
+                        </div>    
+                        <div>
+                            {{chef_prof.chef.first_name}} {{chef_prof.chef.last_name}}
+                        </div>
+                        <div>
+                            {{chef_prof.description}}
+                        </div>
+                    </div>
+                    <div class="col-md-2 text-center">
+                        {% if chef_prof.chef != user %}
+                            <a class="btn btn-secondary" href="{% url 'view_chef_subscription' chef_prof.chef.id %}">Subscribe</a>
+                        {% endif %}
+                    </div>
+                </div>
+                <div><br></div>
+                <div id="multiItemCarousel" class="carousel slide border-bottom" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        {% for recipe in chef_prof.get_discovery_recipes %}
+                            {% if forloop.counter0|divisibleby:3 %}
+                                {% if forloop.first %}
+                                <div class="carousel-item active">
+                                {% else %}
+                                <div class="carousel-item">
+                                {% endif %}
+                                <div class="row">
+                            {% endif %}
+                                    <div class="col-md-4">
+                                        {% include 'recipe_template.html' %}
+                                    </div>
+                            {% if forloop.counter|divisibleby:3 or forloop.last %}
+                                </div>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#multiItemCarousel" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#multiItemCarousel" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+            {{ value|linebreaks }}

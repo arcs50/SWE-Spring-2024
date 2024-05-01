@@ -56,8 +56,11 @@
 <div class="container h-100">
     {% if is_chef %}
         <div class="row text-center">
-            <div class="col-md-6">
+            <div class="col">
                 
+            </div>
+            <div class="col-md-4">
+                <a class="btn btn-outline-secondary" href="{% url 'create_chef_subscription' chef_id=chef_id %}"><i class="fas fa-pencil-alt"></i> Create Your Own Subscriptions</a>
             </div>
             <div class="col-md-2">
                 <a class="btn btn-outline-secondary" href="{% url 'create_recipe' %}"><i class="fas fa-pencil-alt"></i> Create Recipe</a>

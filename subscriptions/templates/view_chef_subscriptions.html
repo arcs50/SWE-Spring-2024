@@ -1,4 +1,4 @@
-{% extends 'template.html' %}
+{% extends 'recipeApp/base.html' %}
 
 {% block title %}
 
@@ -30,7 +30,7 @@ View Chef Subscriptions
 {% block main_body %}
 <div class="container">
   <div class="chef-profile text-center">
-    <h1>{{ chef_profile.title }}'s Profile</h1>
+    <a class="link-dark" href="{% url 'view_chef_prof' chef_profile.id %}"><h1>{{ chef_profile.title }}'s Profile</h1></a>
   </div>
 
   <div class="subscription-list">
