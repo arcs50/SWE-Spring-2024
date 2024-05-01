@@ -49,7 +49,7 @@
 
 <div class="container overflow-hidden">
     <div class="row border border-dark rounded-3 p-1 m-1 gap-1">
-        recommand chefs:
+        <p>recommand chefs:<p>
         {% for chef_prof in chef_profs %}
             {% include 'chef_prof_template.html' %}
         {% endfor %}
@@ -58,9 +58,11 @@
 
 <div class="container overflow-hidden">
     <div class="row border border-dark rounded-3 p-1 m-1 gap-1">
-        recommand recipes:
+        <p>recommand recipes:<p>
         {% for recipe in recipes %}
-            {% include 'recipe_template.html' %}
+            <div class="col-lg-4 d-flex align-items-stretch">
+                {% include 'recipe_template.html' %}
+            </div>
         {% endfor %}
     </div>
 </div>
