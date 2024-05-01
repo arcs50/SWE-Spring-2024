@@ -1,6 +1,11 @@
-{% extends 'base.html' %}
+{% extends 'recipeApp/base.html' %}
 
-{% block content %}
+{% block title %}
+
+View Site Subscriptions
+{% endblock title %}
+
+{% block main_body %}
 <div class="container" style="padding-top: 40px;">
   <div class="text-center">
     <h1 class="display-4">Cooking Master</h1>
@@ -13,7 +18,7 @@
         <div class="card h-100">
           <div class="card-body">
             <h5 class="card-title">{{ subscription.title }}</h5>
-            <p class="card-text">{{ subscription.description }}</p>
+            <p class="card-text">{{ subscription.get_caption }}</p>
             <p class="card-text"><strong>Price:</strong> ${{ subscription.price }}</p>
             <form action="{% url 'create_checkout_session' %}" method="POST">
               {% csrf_token %}

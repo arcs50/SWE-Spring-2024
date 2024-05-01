@@ -77,6 +77,26 @@ class SiteSubscription(models.Model):
 
     def __str__(self):
         return self.title
+    
+    def get_caption(self):
+        caption = "$" 
+        if self.price % 1 == 0:
+            caption += str(int(self.price)) + "/"
+        else:
+            caption += str(self.price) + "/"
+        plural = False
+        if self.time_quantity > 1:
+            caption += str(self.time_quantity) + " "
+            plural = True
+        if self.time_unit == 'W':
+            caption += "Week"
+        elif self.time_unit == "M":
+            caption += "Month"
+        elif self.time_unit == "Y":
+            caption += "Year"
+        if plural:
+            caption += "s"
+        return caption
 
 class SubscriptionToSite(models.Model):
     chef = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)

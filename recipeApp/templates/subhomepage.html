@@ -36,7 +36,7 @@
     </div>
     <div class="container overflow-hidden">
         <div class="row border border-dark rounded-3 p-1 m-1 gap-1">
-            <p>bookmarks: </p>
+            <a class="link-dark" href={% url 'view_bookmarks' sub_id %}><p>bookmarks: </p></a>
             {% for bookmark in bookmarks %}
                 {% with recipe=bookmark.recipe %}
                 <div class="col-lg-4 d-flex align-items-stretch">

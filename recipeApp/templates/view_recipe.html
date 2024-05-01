@@ -24,8 +24,14 @@
     {% if user.is_authenticated %}
         {% if is_chef %}
             <div class="row">
-                <div class="col-md-12 text-right">
+                <div class="col-md-10 text-right">
                     <a class="btn btn-outline-secondary float-end" href="{% url 'update_recipe' recipe.id %}"><i class="fas fa-pencil-alt"></i> Edit</a>
+                </div>
+                <div class="col-md-2">
+                    <form method="POST">
+                        {% csrf_token %}
+                        <button name="delete" class="btn btn-outline-secondary"  type="submit"><i class="fa fa-trash"></i> Delete</button>
+                    </form>
                 </div>
             </div>
             <div>
@@ -37,7 +43,7 @@
         <div class="row h-100 justify-content-center align-items-center border-bottom">
             <div class="col-md-4">
                 <h1>{{recipe.title}}</h1>
-                <a class="link-dark" href="{% url 'view_chef_prof' recipe.chef.id %}">{{recipe.chef.first_name}} {{recipe.chef.last_name}}</a>
+                <a class="link-dark" href="{% url 'view_chef_prof' chef_prof.id %}">{{recipe.chef.first_name}} {{recipe.chef.last_name}}</a>
                 <div class="row">
                     <div class="col">
                         {% for _ in avg_rating_full %}
@@ -101,6 +107,7 @@
             </div>
         </div>
     </div>
+    {% if is_chef or is_subscriber or recipe.free_to_nonsubscriber %}
     <div class="container-inner">
         <div class="row  h-100 justify-content-center border-bottom">
             <div class="col-md-4">
@@ -213,6 +220,13 @@
             </div>
         </div>
     </div>
-                            
+    {% endif %}
+    {% if not is_chef and not is_subscriber and not recipe.free_to_nonsubscriber %}
+
+        <div class="container-inner text-center">
+            <a class="btn btn-outline-secondary" href="{% url 'view_chef_subscription' recipe.chef.id %}">Subscribe to view recipe</a>
+        </div>
+        {{ value|linebreaks }}
+    {% endif %}                        
 </div>
 {% endblock main_body %}
