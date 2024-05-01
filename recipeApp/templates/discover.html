@@ -33,7 +33,7 @@
 {% block main_body %}
 <div class="container">
     <div class="container overflow-hidden">
-        <form class="row p-1 m-1 form-inline" role="form" action="{% url 'search' %}" method="post">
+        <form class="row p-1 m-1 form-inline" role="form" action="{% url 'discover' %}" method="post">
             {% csrf_token %}
             <div class="col-auto">
                 <input type="text" readonly class="form-control-plaintext" value="search chefs or recipes: ">
@@ -46,6 +46,28 @@
                 <button type="submit" class="btn btn-primary">search</button>  
             </div>
         </form>
+        {% if search_recipes %}
+        <div class="container overflow-hidden">
+            <div class="row border border-dark rounded-3 p-1 m-1 gap-1">
+                <h2>Recipe search results<h2>
+                {% for recipe in search_recipes %}
+                    <div class="col-lg-4 d-flex align-items-stretch">
+                        {% include 'recipe_template.html' %}
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+        {% if search_chef_profs %}
+        <div class="container overflow-hidden">
+            <div class="row border border-dark rounded-3 p-1 m-1 gap-1">
+                <h2>Chef profile search results<h2>
+                {% for chef_prof in search_chef_profs %}
+                        {% include 'chef_prof_template.html' %}
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
         {% for chef_prof in chef_profs %}
             {% include 'chef_prof_template.html' %}
         {% endfor %}
