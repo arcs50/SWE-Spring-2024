@@ -46,39 +46,15 @@ def discover(request):
     params = {}   
     if request.user.is_authenticated:
         params['is_authenticated'] = True
-        params['avatar_dir'] = 'images/sad_cat.jpg'
         params['user'] = request.user
         
     # get recipes
     recipes = Recipe.objects.all()[:9]
-    rec_recipes = []
-    for recipe in recipes:
-        chef_person = Person.objects.get(id=recipe.chef_id)
-        rec_recipe = {
-            'recipe_id': recipe.id,
-            'chef_name': chef_person.first_name + ' ' + chef_person.last_name,
-            'recipe': recipe
-        }
-        rec_recipes.append(rec_recipe)
-    
     # get chefs
-    chefs = ChefProfile.objects.all()[:9]
-    chef_profs = ChefProfile.objects.all()
-    rec_chefs = []
-    for chef in chefs:
-        chef_person = Person.objects.get(id=chef.chef_id)
-        rec_chef = {
-            'chef_id': chef.chef_id,
-            'title': chef.title,
-            'chef_name': chef_person.first_name + ' ' + chef_person.last_name,
-            'avatar_dir': 'images/sad_cat.jpg'
-        },
+    chef_profs = ChefProfile.objects.all()[:9]
     
-    
-    params['rec_recipes'] = rec_recipes
-    params['rec_chefs'] = rec_chefs
     params['chef_profs'] = chef_profs
-    params['chefs'] = chefs
+    params['recipes'] = recipes
     
     return render(request, 'discover.html', params)
 
@@ -91,37 +67,14 @@ def search(request):
     params = {}   
     if request.user.is_authenticated:
         params['is_authenticated'] = True
-        params['avatar_dir'] = 'images/sad_cat.jpg'
         
     # get recipes
     recipes = Recipe.objects.filter(title__icontains=searchtext)
-    rec_recipes = []
-        
-    for recipe in recipes:
-        chef_person = Person.objects.get(id=recipe.chef_id)
-        rec_recipe = {
-            'recipe_id': recipe.id,
-            'chef_name': chef_person.first_name + ' ' + chef_person.last_name,
-            'recipe': recipe
-        }
-        rec_recipes.append(rec_recipe)
-    
     # get chefs
-    chefs = ChefProfile.objects.filter(title__icontains=searchtext)
-    rec_chefs = []
-    for chef in chefs:
-        chef_person = Person.objects.get(id=chef.chef_id)
-        rec_chef = {
-            'chef_id': chef.chef_id,
-            'title': chef.title,
-            'chef_name': chef_person.first_name + ' ' + chef_person.last_name,
-            'avatar_dir': 'images/sad_cat.jpg'
-        }
-        rec_chefs.append(rec_chef)
+    chef_profs = ChefProfile.objects.filter(title__icontains=searchtext)
     
-    params['rec_recipes'] = rec_recipes
-    params['rec_chefs'] = rec_chefs
-    params['chefs'] = chefs
+    params['chef_profs'] = chef_profs
+    params['recipes'] = recipes
     
     return render(request, 'discover.html', params)
 
